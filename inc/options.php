@@ -75,6 +75,7 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
           src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
           </script>
         </div>
+        <b><?php echo __('Author:') ?></b> <a href="http://www.benmarshall.me/book-it-transportation/" target="_blank">Ben Marshall</a><br>
         <b><?php echo __('Version:') ?></b> <?php echo $plugin['Version'] ?><br>
         <b><?php echo __('Last Updated:') ?></b> <?php echo date("F d, Y g:i:sa", filemtime(__FILE__)) ?>
         <h4><?php echo __('Change Log') ?></h4>
