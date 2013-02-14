@@ -1,8 +1,10 @@
 <?php
 /*
-Book It! Transportation 1.0.01
+Book It! Transportation 1.0.2
 http://www.benmarshall.me/book-it-transportation/
 */
+
+date_default_timezone_set(get_option('timezone_string'));
 
 // An array to hold the plugin's settings
 $bookittrans_config = array();
@@ -72,7 +74,7 @@ $bookittrans_config['times'] = array(
 );
 
 // Reservation confirmation email template
-$bookittrans_config['emails']['reservation_confirmation_email_subject'] = 'Your reservation has beed confirmed';
+$bookittrans_config['emails']['reservation_confirmation_email_subject'] = get_option('bookittrans_confirmation_email_subject');
 $bookittrans_config['emails']['reservation_confirmation_email_confirmed_template'] = '
 <p><strong>Thanks for choosing Austin Choice Limousines to book your next trip!</strong> Your reservation has been confirmed.</p>
 <p>Review your reservation details below:</p>
@@ -83,7 +85,7 @@ $bookittrans_config['emails']['reservation_confirmation_email_confirmed_template
 </tr>
 <tr>
 <td>Reservation Date:</td>
-<td>[[MONTH]][[DATE]],[[YEAR]] [[TIME]]</td>
+<td>[[MONTH]] [[DATE]],[[YEAR]] [[TIME]]</td>
 </tr>
 <tr>
 <td>Contact Name:</td>
@@ -127,7 +129,7 @@ Instructions:<br><br>[[INSTRUCTIONS]]
 ';
 
 // Reservation email template
-$bookittrans_config['emails']['reservation_email_subject'] = 'We\'ve received your reservation request';
+$bookittrans_config['emails']['reservation_email_subject'] = get_option('bookittrans_reservation_email_subject');
 $bookittrans_config['emails']['reservation_email_template'] = '
 <p><strong>Thanks for choosing Austin Choice Limousines to book your next trip!</strong> We\'ve received your reservation booking and will contact you shorty for confirmation. Most of the time we can do this very quickly, but we may need to contact you for additional information if needed before we can confirm your booking.</p>
 <p>Review your reservation details below:</p>
@@ -138,7 +140,7 @@ $bookittrans_config['emails']['reservation_email_template'] = '
 </tr>
 <tr>
 <td>Reservation Date:</td>
-<td>[[MONTH]][[DATE]],[[YEAR]] [[TIME]]</td>
+<td>[[MONTH]] [[DATE]],[[YEAR]] [[TIME]]</td>
 </tr>
 <tr>
 <td>Contact Name:</td>
@@ -339,7 +341,7 @@ $bookittrans_config['post_types'] = array(
 $bookittrans_config['required_fields'] = array('contact_name','contact_phone','contact_email','month','date','year','time','num_passengers','pickup','vehicle','event_type');
 
 // Default reservation status
-$bookittrans_config['reservation-status'] ='pending-review';
+$bookittrans_config['reservation-status'] = get_option('bookittrans_default_reservation_status');
 
 // Reservation recieved page
 $bookittrans_config['reservation-received-url'] = get_option('bookittrans_reservation_received_url');
