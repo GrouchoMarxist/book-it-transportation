@@ -35,12 +35,46 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
       </td>
     </tr>
   </table>
+  <h3 class="title"><?php echo __('Email Settings') ?></h3>
+  <table class="form-table">
+    <tr valign="top">
+      <th scope="row">
+        <label for="bookittrans_reservation_email_subject"><?php echo __('New Reservation Subject') ?></label>
+      </th>
+      <td>
+        <input name="bookittrans_reservation_email_subject" type="text" id="bookittrans_reservation_email_subject" value="<?php echo get_option('bookittrans_reservation_email_subject'); ?>" class="regular-text">
+        <p class="description"><?php echo __('The subject of the email that get\'s sent for new reservation bookings.') ?></p>
+      </td>
+    </tr>
+    <tr valign="top">
+      <th scope="row">
+        <label for="bookittrans_confirmation_email_subject"><?php echo __('Reservation Confirmed Subject') ?></label>
+      </th>
+      <td>
+        <input name="bookittrans_confirmation_email_subject" type="text" id="bookittrans_confirmation_email_subject" value="<?php echo get_option('bookittrans_confirmation_email_subject'); ?>" class="regular-text">
+        <p class="description"><?php echo __('The subject of the email that get\'s sent for reservation confirmations.') ?></p>
+      </td>
+    </tr>
+  </table>
   <p class="submit"><input type="submit" name="submit" id="submit" class="button button-primary" value="<?php echo __('Save Changes') ?>"></p>
   </form>
   <div class="metabox-holder">
     <div class="postbox">
       <h3 class="hndle"><?php echo __('Book It! Transportation Details') ?></h3>
       <div class="inside">
+        <div style="float: right;">
+          <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-6102402008946964";
+          /* Book It! Transportation Medium Rectangle */
+          google_ad_slot = "3498616466";
+          google_ad_width = 300;
+          google_ad_height = 250;
+          //-->
+          </script>
+          <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+          </script>
+        </div>
         <b><?php echo __('Version:') ?></b> <?php echo $plugin['Version'] ?><br>
         <b><?php echo __('Last Updated:') ?></b> <?php echo date("F d, Y g:i:sa", filemtime(__FILE__)) ?>
         <h4><?php echo __('Change Log') ?></h4>
