@@ -3,7 +3,7 @@
 Plugin Name: Book It! Transportation
 Plugin URI: http://www.benmarshall.me/book-it-transportation/
 Description: A complete management system for your transportation business enabling you to easily accept and manage your transportation bookings
-Version: 1.0
+Version: 1.0.01
 Author: Ben Marshall
 Author URI: http://www.benmarshall.me
 */
@@ -243,7 +243,24 @@ add_action( 'admin_init', 'bookittrans_admin' );
 function bookittrans_admin() {
   add_meta_box( 'reservation_details', 'Reservation Details', 'display_resevation_details', 'bookit_reservation', 'normal', 'core' );
   add_meta_box( 'reservation_notification_options', 'Notification Options', 'display_notification_options', 'bookit_reservation', 'side', 'core' );
+  bookittrans_add_settings();
 }
+function bookittrans_add_settings() {
+  register_setting( 'bookittrans_options', 'bookittrans_reservation_received_url', 'bookittrans_isValidURL' );
+}
+function bookittrans_isValidURL($value) {
+  $response = wp_remote_get( esc_url_raw( $value ) );
+  if (is_wp_error( $response ) ) {
+    add_settings_error(
+      'bookittrans_reservation_received_url',
+      'bookittrans_reservation_received_url_error',
+      'Please enter a valid, working URL.',
+      'error'
+    );
+  }
+  return $value;
+}
+
 // Function that prints out the HTML for the edit screen section.
 function display_resevation_details($object) {
   global $bookittrans_config;
@@ -527,4 +544,16 @@ function bookittrans_randString($length=10, $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZ
     $str .= $charset[mt_rand(0, $count-1)];
   }
   return $str;
+}
+
+
+add_action( 'admin_menu', 'bookittrans_menu' );
+function bookittrans_menu() {
+  add_options_page( 'Book It! Transportation Settings', 'Book It! Transportation', 'manage_options', 'bookittrans', 'bookittrans_options' );
+}
+function bookittrans_options() {
+  if ( !current_user_can( 'manage_options' ) )  {
+    wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+  }
+  include( plugin_dir_path( __FILE__ ) . 'inc/options.php');
 }
