@@ -1,8 +1,10 @@
 <?php
 /*
-Book It! Transportation 1.0.01
+Book It! Transportation 1.0.2
 http://www.benmarshall.me/book-it-transportation/
 */
+
+date_default_timezone_set('America/Chicago');
 
 // An array to hold the plugin's settings
 $bookittrans_config = array();
@@ -339,7 +341,7 @@ $bookittrans_config['post_types'] = array(
 $bookittrans_config['required_fields'] = array('contact_name','contact_phone','contact_email','month','date','year','time','num_passengers','pickup','vehicle','event_type');
 
 // Default reservation status
-$bookittrans_config['reservation-status'] ='pending-review';
+$bookittrans_config['reservation-status'] = get_option('bookittrans_default_reservation_status');
 
 // Reservation recieved page
 $bookittrans_config['reservation-received-url'] = get_option('bookittrans_reservation_received_url');
