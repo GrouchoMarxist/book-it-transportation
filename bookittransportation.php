@@ -3,11 +3,10 @@
 Plugin Name: Book It! Transportation
 Plugin URI: http://www.benmarshall.me/book-it-transportation/
 Description: A complete management system for your transportation business enabling you to easily accept and manage your transportation bookings
-Version: 1.0.01
+Version: 1.0.2
 Author: Ben Marshall
 Author URI: http://www.benmarshall.me
 */
-
 include( plugin_dir_path( __FILE__ ) . 'config.php');
 
 // Hooks
@@ -19,6 +18,16 @@ function bookittrans_init() {
   global $bookittrans_config;
   
   bookittrans_start_session();
+  
+  if(!get_option('bookittrans_default_reservation_status')) {
+     update_option( 'bookittrans_default_reservation_status', 'pending-review' );
+  }
+  if(!get_option('bookittrans_confirmation_email_subject')) {
+     update_option( 'bookittrans_confirmation_email_subject', 'Your reservation has beed confirmed' );
+  }
+  if(!get_option('bookittrans_reservation_email_subject')) {
+     update_option( 'bookittrans_reservation_email_subject', 'We\'ve received your reservation request' );
+  }
   
   // Check for pluing dependencies.
   bookittrans_dependentplugin_check();
@@ -247,6 +256,20 @@ function bookittrans_admin() {
 }
 function bookittrans_add_settings() {
   register_setting( 'bookittrans_options', 'bookittrans_reservation_received_url', 'bookittrans_isValidURL' );
+  register_setting( 'bookittrans_options', 'bookittrans_default_reservation_status' );
+  register_setting( 'bookittrans_options', 'bookittrans_confirmation_email_subject', 'bookittrans_emailSubject' );
+  register_setting( 'bookittrans_options', 'bookittrans_reservation_email_subject', 'bookittrans_emailSubject' );
+}
+function bookittrans_emailSubject($value) {
+  if(strlen($value) > 80) {
+    add_settings_error(
+      'bookittrans_confirmation_email_subject',
+      'bookittrans_confirmation_email_subject_error',
+      'To help avoid spam filters, avoid a email subject with more than 80 characters.',
+      'error'
+    );
+  }
+  return $value;
 }
 function bookittrans_isValidURL($value) {
   $response = wp_remote_get( esc_url_raw( $value ) );
