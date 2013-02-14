@@ -1,8 +1,9 @@
 <?php
 /*
-Book It! Transportation 1.0.01
-http://www.benmarshall.me/book-it-transportation/
-
+ * Book It! Transportation 1.0.01
+ * http://www.benmarshall.me/book-it-transportation/
+ */
+?>
 <div class="wrap">
   <?php screen_icon(); ?>
   <form action="options.php" method="post" id="bookittrans_options_form" name="bookittrans_options_form">
