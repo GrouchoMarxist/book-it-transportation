@@ -1,6 +1,6 @@
 <?php
 /*
-Book It! Transportation 1.0
+Book It! Transportation 1.0.01
 http://www.benmarshall.me/book-it-transportation/
 */
 
@@ -342,4 +342,4 @@ $bookittrans_config['required_fields'] = array('contact_name','contact_phone','c
 $bookittrans_config['reservation-status'] ='pending-review';
 
 // Reservation recieved page
-$bookittrans_config['reservation-received-url'] = 'http://www.austinchoicelimo.com/reservation-received/';
+$bookittrans_config['reservation-received-url'] = get_option('bookittrans_reservation_received_url');
