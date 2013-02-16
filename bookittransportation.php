@@ -758,3 +758,27 @@ HTML;
     }
   }
 }
+
+add_filter('manage_edit-bookit_reservation_columns', 'add_new_bookit_reservation_columns');
+function add_new_bookit_reservation_columns($bookit_reservation_columns) {
+  $bookit_reservation_columns['cb'] = '<input type="checkbox" />';
+  $bookit_reservation_columns['title'] = _x('Confirmation Code', 'column name');
+  $bookit_reservation_columns['date_reserved'] = __('Date Reserved');
+  return $bookit_reservation_columns;
+}
+
+add_action('manage_bookit_reservation_posts_custom_column', 'manage_bookit_reservation_columns', 10, 2);
+function manage_bookit_reservation_columns($column_name, $id) {
+  global $post;
+  switch ($column_name) {
+    case 'date_reserved':
+      $month = get_post_meta( $post->ID , 'month' , true );
+      $date = get_post_meta( $post->ID , 'date' , true );
+      $year = get_post_meta( $post->ID , 'year' , true );
+      $time = get_post_meta( $post->ID , 'time' , true );
+      echo date('M. j, Y g:ia', strtotime($month.'-'.$date.'-'.$year.' '.$time));
+      break;
+    default:
+      break;
+  }
+}
