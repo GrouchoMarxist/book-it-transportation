@@ -17,6 +17,7 @@ A complete management system for your transportation business enabling you to ea
 * Added the ability to edit new reservation emails
 * Added the ability to edit outsource reservation emails
 * Added the ability to submit a bug or feature request
+* Added Date Reserved column to reservation list
 
 = 1.0.2 =
 * Added the ability to change the email subject of the new reservation booking emails
