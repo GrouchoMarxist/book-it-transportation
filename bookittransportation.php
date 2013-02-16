@@ -16,9 +16,6 @@ register_activation_hook( __FILE__, 'bookittrans_dependentplugin_check' );
 add_action( 'init', 'bookittrans_init' );
 function bookittrans_init() {
   global $bookittrans_config;
-  
-  bookittrans_start_session();
-  
   if(!get_option('bookittrans_default_reservation_status')) {
      update_option( 'bookittrans_default_reservation_status', 'pending-review' );
   }
@@ -290,26 +287,6 @@ function bookittrans_add_categories() {
   }
 }
 
-// admin_init is triggered before any other hook when a user access the admin area. This hook doesn't provide any parameters, so it can only be used to callback a specified function.
-add_action( 'admin_init', 'bookittrans_admin' );
-function bookittrans_admin() {
-  global $pagenow;
-  add_meta_box( 'reservation_details', 'Reservation Details', 'display_resevation_details', 'bookit_reservation', 'normal', 'core' );
-  if( $pagenow == 'post.php') {
-    add_meta_box( 'reservation_notification_options', 'Notification Options', 'display_notification_options', 'bookit_reservation', 'side', 'core' );
-  }
-  bookittrans_add_settings();
-}
-function bookittrans_add_settings() {
-  register_setting( 'bookittrans_options', 'bookittrans_reservation_received_url', 'bookittrans_isValidURL' );
-  register_setting( 'bookittrans_options', 'bookittrans_default_reservation_status' );
-  register_setting( 'bookittrans_options', 'bookittrans_confirmation_email_subject', 'bookittrans_emailSubject' );
-  register_setting( 'bookittrans_options', 'bookittrans_reservation_email_subject', 'bookittrans_emailSubject' );
-  register_setting( 'bookittrans_options', 'bookit_outsource_reservation_email_subject', 'bookittrans_emailSubject' );
-  register_setting( 'bookittrans_options', 'bookittrans_confirmation_email_template' );
-  register_setting( 'bookittrans_options', 'bookittrans_reservation_email_template' );
-  register_setting( 'bookittrans_options', 'bookittrans_outsource_reservation_email_template' );
-}
 function bookittrans_emailSubject($value) {
   if(strlen($value) > 80) {
     add_settings_error(
@@ -492,8 +469,9 @@ function bookittrans_change_enter_title_text( $text, $post ) {
 add_filter( 'gettext', 'change_publish_button', 10, 2 );
 function change_publish_button( $translation, $text ) {
   if( 'bookit_reservation' == get_post_type())
-    if ( $text == 'Publish' )
+    if ( $text == 'Publish' ) {
       return 'Save Reservation';
+    }
   return $translation;
 }
 
@@ -640,11 +618,6 @@ add_action('wp_login', 'bookittrans_end_session');
 function bookittrans_end_session() {
   unset($_SESSION['bookittrans']);
 }
-function bookittrans_start_session() {
-  if(!session_id()) {
-    session_start();
-  }
-}
 
 function bookittrans_randString($length=10, $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
   $str = '';
@@ -668,38 +641,6 @@ function bookittrans_options() {
   include( plugin_dir_path( __FILE__ ) . 'inc/options.php');
 }
 
-
-
-
-
-
-
-/*
- * Example code showing how to hook WordPress to add fields to the taxonomny term edit screen.
- * 
- * This example is meant to show how, not to be a drop in example.
- *
- * This example was written in response to this question:
- *
- *    http://lists.automattic.com/pipermail/wp-hackers/2010-August/033671.html
- *
- * By:
- *
- *    Mike Schinkel (http://mikeschinkel.com/custom-wordpress-plugins/)
- *
- * NOTE:
- *
- *    This could easily become a plugin if it were fleshed out.
- *    A class with static methods was used to minimize the variables & functions added to the global namespace.
- *    wp_options was uses with one option be tax/term instead of via a serialize array because it aids in retrival
- *    if there get to be a large number of tax/terms types. A taxonomy/term meta would be the prefered but WordPress
- *    does not have one.
- *
- * This example is licensed GPLv2.
- *
- */
-
-// These are helper functions you can use elsewhere to access this info
 function get_taxonomy_term_type($taxonomy,$term_id) {
   return get_option("_term_type_{$taxonomy}_{$term->term_id}");
 }
@@ -781,4 +722,38 @@ function manage_bookit_reservation_columns($column_name, $id) {
     default:
       break;
   }
+}
+
+if($bookittrans_config['enable_money_box']) {
+  add_action( 'post_submitbox_misc_actions', 'bookit_publish_box' );
+  function bookit_publish_box($post) {
+    ?>
+    <div class="misc-pub-section misc-pub-section">
+      <h4><?php echo __('The Money Box', 'bookit') ?></h4>
+      <label for="bookit_quoted_price"><?php echo __('Quoted Price:','bookit') ?></label>
+      <input type="number" name="bookit_quoted_price" id="bookit_quoted_price" step=".1" min="0" value="<?php echo get_post_meta($post->ID, 'bookit_quoted_price', true) ?>">
+    </div>
+    <?
+  }
+}
+
+// admin_init is triggered before any other hook when a user access the admin area. This hook doesn't provide any parameters, so it can only be used to callback a specified function.
+add_action( 'admin_init', 'bookittrans_admin' );
+function bookittrans_admin() {
+  global $pagenow;
+  add_meta_box( 'reservation_details', 'Reservation Details', 'display_resevation_details', 'bookit_reservation', 'normal', 'core' );
+  if( $pagenow == 'post.php') {
+    add_meta_box( 'reservation_notification_options', 'Notification Options', 'display_notification_options', 'bookit_reservation', 'side', 'core' );
+  }
+  bookittrans_add_settings();
+}
+function bookittrans_add_settings() {
+  register_setting( 'bookittrans_options', 'bookittrans_reservation_received_url', 'bookittrans_isValidURL' );
+  register_setting( 'bookittrans_options', 'bookittrans_default_reservation_status' );
+  register_setting( 'bookittrans_options', 'bookittrans_confirmation_email_subject', 'bookittrans_emailSubject' );
+  register_setting( 'bookittrans_options', 'bookittrans_reservation_email_subject', 'bookittrans_emailSubject' );
+  register_setting( 'bookittrans_options', 'bookit_outsource_reservation_email_subject', 'bookittrans_emailSubject' );
+  register_setting( 'bookittrans_options', 'bookittrans_confirmation_email_template' );
+  register_setting( 'bookittrans_options', 'bookittrans_reservation_email_template' );
+  register_setting( 'bookittrans_options', 'bookittrans_outsource_reservation_email_template' );
 }

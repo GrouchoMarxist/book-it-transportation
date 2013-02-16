@@ -246,3 +246,5 @@ $bookittrans_config['reservation-status'] = get_option('bookittrans_default_rese
 
 // Reservation recieved page
 $bookittrans_config['reservation-received-url'] = get_option('bookittrans_reservation_received_url');
+
+$bookittrans_config['enable_money_box'] = false;
