@@ -1,6 +1,6 @@
 <?php
 /*
-Book It! Transportation 1.0.2
+Book It! Transportation 1.0.3
 http://www.benmarshall.me/book-it-transportation/
 */
 
@@ -73,115 +73,16 @@ $bookittrans_config['times'] = array(
   '24:30'=>'12:30pm'
 );
 
+$bookittrans_config['emails']['outsource_reservation_email_subject'] = get_option('bookit_outsource_reservation_email_subject');
+$bookittrans_config['emails']['outsource_reservation_email_template'] = get_option('bookit_outsource_reservation_email_template');
+
 // Reservation confirmation email template
 $bookittrans_config['emails']['reservation_confirmation_email_subject'] = get_option('bookittrans_confirmation_email_subject');
-$bookittrans_config['emails']['reservation_confirmation_email_confirmed_template'] = '
-<p><strong>Thanks for choosing Austin Choice Limousines to book your next trip!</strong> Your reservation has been confirmed.</p>
-<p>Review your reservation details below:</p>
-<table>
-<tr>
-<td>Confirmation ID:</td>
-<td><strong>[[TITLE]]</strong></td>
-</tr>
-<tr>
-<td>Reservation Date:</td>
-<td>[[MONTH]] [[DATE]],[[YEAR]] [[TIME]]</td>
-</tr>
-<tr>
-<td>Contact Name:</td>
-<td>[[CONTACT_NAME]]</td>
-</tr>
-<tr>
-<td>Contact Phone:</td>
-<td>[[CONTACT_PHONE]]</td>
-</tr>
-<tr>
-<td>Contact Email:</td>
-<td>[[CONTACT_EMAIL]]</td>
-</tr>
-<tr>
-<td>Pickup Location:</td>
-<td>[[PICKUP]]</td>
-</tr>
-<tr>
-<td>Destination(s):</td>
-<td>[[DESTINATIONS]]</td>
-</tr>
-<tr>
-<td>Perferred Vechicle:</td>
-<td>[[VEHICLE]]</td>
-</tr>
-<tr>
-<td>Event Type:</td>
-<td>[[EVENT_TYPE]]</td>
-</tr>
-<tr>
-<td>Number of Passengers:</td>
-<td>[[NUM_PASSENGERS]]</td>
-</tr>
-<tr>
-<td>Number of Hours:</td>
-<td>[[NUM_HOURS]]</td>
-</tr>
-</table>
-<hr>
-Instructions:<br><br>[[INSTRUCTIONS]]
-';
+$bookittrans_config['emails']['reservation_confirmation_email_confirmed_template'] = get_option('bookittrans_confirmation_email_template');
 
 // Reservation email template
 $bookittrans_config['emails']['reservation_email_subject'] = get_option('bookittrans_reservation_email_subject');
-$bookittrans_config['emails']['reservation_email_template'] = '
-<p><strong>Thanks for choosing Austin Choice Limousines to book your next trip!</strong> We\'ve received your reservation booking and will contact you shorty for confirmation. Most of the time we can do this very quickly, but we may need to contact you for additional information if needed before we can confirm your booking.</p>
-<p>Review your reservation details below:</p>
-<table>
-<tr>
-<td>Confirmation ID:</td>
-<td><strong>[[TITLE]]</strong></td>
-</tr>
-<tr>
-<td>Reservation Date:</td>
-<td>[[MONTH]] [[DATE]],[[YEAR]] [[TIME]]</td>
-</tr>
-<tr>
-<td>Contact Name:</td>
-<td>[[CONTACT_NAME]]</td>
-</tr>
-<tr>
-<td>Contact Phone:</td>
-<td>[[CONTACT_PHONE]]</td>
-</tr>
-<tr>
-<td>Contact Email:</td>
-<td>[[CONTACT_EMAIL]]</td>
-</tr>
-<tr>
-<td>Pickup Location:</td>
-<td>[[PICKUP]]</td>
-</tr>
-<tr>
-<td>Destination(s):</td>
-<td>[[DESTINATIONS]]</td>
-</tr>
-<tr>
-<td>Perferred Vechicle:</td>
-<td>[[VEHICLE]]</td>
-</tr>
-<tr>
-<td>Event Type:</td>
-<td>[[EVENT_TYPE]]</td>
-</tr>
-<tr>
-<td>Number of Passengers:</td>
-<td>[[NUM_PASSENGERS]]</td>
-</tr>
-<tr>
-<td>Number of Hours:</td>
-<td>[[NUM_HOURS]]</td>
-</tr>
-</table>
-<hr>
-Instructions:<br><br>[[INSTRUCTIONS]]
-';
+$bookittrans_config['emails']['reservation_email_template'] = get_option('bookittrans_reservation_email_template');
 
 // Reservation fields.
 $bookittrans_config['fields'] = array(

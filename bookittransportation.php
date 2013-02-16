@@ -3,7 +3,7 @@
 Plugin Name: Book It! Transportation
 Plugin URI: http://www.benmarshall.me/book-it-transportation/
 Description: A complete management system for your transportation business enabling you to easily accept and manage your transportation bookings
-Version: 1.0.2
+Version: 1.0.3
 Author: Ben Marshall
 Author URI: http://www.benmarshall.me
 */
@@ -56,13 +56,19 @@ function bookittrans_process_post() {
           }
           die();
           break;
-        case 'send_reservation_confirmed':
+       case 'send_reservation_confirmed':
           if(isset($_POST['ID'])) {
             if(email_reservation_confirmed($_POST['ID'])) {
               echo __('Email successfully sent.');
             } else {
               echo __('There was a problem sending the email.');
             }
+          }
+          die();
+          break;
+        case 'send_reservation_outsource':
+          if(isset($_POST['ID'])) {
+            echo email_reservation_outsource($_POST['ID']);
           }
           die();
           break;
@@ -169,6 +175,43 @@ function email_reservation_received($ID) {
   wp_mail( $user_email, $bookittrans_config['emails']['reservation_email_subject'], bookittrans_tags($bookittrans_config['emails']['reservation_email_template'],$ary), $headers );
   return true;
 }
+function email_reservation_outsource( $ID ) {
+  global $bookittrans_config;
+  $post = get_post($ID);
+  $meta = get_post_custom($ID);
+  $outsource = get_the_terms( $ID, 'outsource_companies', '', '', '' );
+  if ($outsource) {
+    $user_name = $outsource[0]->name;
+    $user_email = get_option("_term_type_outsource_companies_".$outsource[0]->term_id);
+    $subject = $bookittrans_config['emails']['outsource_reservation_email_subject'];
+    $categories = array();
+    foreach($bookittrans_config['categories'] as $key=>$value) {
+      $category = wp_get_post_terms( $ID, $key );
+      $categories[$key] = $category;
+    }
+    
+    $ary = array(
+      'title' => $post->post_title
+    );
+    foreach($bookittrans_config['fields'] as $key=>$array) {
+      $ary[$array['key']] = $meta[$array['key']][0];
+    }
+    foreach($categories as $tag=>$array) {
+      foreach($array as $k=>$v) {
+        if(isset($ary[$tag])) $ary[$tag] .= ', ';
+        $ary[$tag] = $v->name;
+      }
+    }
+    
+    $headers[] = 'From: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
+    $headers[] = 'Bcc: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
+    add_filter('wp_mail_content_type',create_function('', 'return "text/html";'));
+    wp_mail( $user_name.' <'.$user_email.'>', $bookittrans_config['emails']['outsource_reservation_email_subject'], bookittrans_tags($bookittrans_config['emails']['outsource_reservation_email_template'],$ary), $headers );
+    return __('Email successfully sent.', 'bookit');
+  } else {
+    return __('<b>This reservation isn\'t currently assiged to an outsource company.</b> Be sure an outsource company is selected and the reservation has been saved.', 'bookit');
+  }
+}
 // Send the reservation confirmed email
 function email_reservation_confirmed($ID) {
   global $bookittrans_config;
@@ -250,8 +293,11 @@ function bookittrans_add_categories() {
 // admin_init is triggered before any other hook when a user access the admin area. This hook doesn't provide any parameters, so it can only be used to callback a specified function.
 add_action( 'admin_init', 'bookittrans_admin' );
 function bookittrans_admin() {
+  global $pagenow;
   add_meta_box( 'reservation_details', 'Reservation Details', 'display_resevation_details', 'bookit_reservation', 'normal', 'core' );
-  add_meta_box( 'reservation_notification_options', 'Notification Options', 'display_notification_options', 'bookit_reservation', 'side', 'core' );
+  if( $pagenow == 'post.php') {
+    add_meta_box( 'reservation_notification_options', 'Notification Options', 'display_notification_options', 'bookit_reservation', 'side', 'core' );
+  }
   bookittrans_add_settings();
 }
 function bookittrans_add_settings() {
@@ -259,6 +305,10 @@ function bookittrans_add_settings() {
   register_setting( 'bookittrans_options', 'bookittrans_default_reservation_status' );
   register_setting( 'bookittrans_options', 'bookittrans_confirmation_email_subject', 'bookittrans_emailSubject' );
   register_setting( 'bookittrans_options', 'bookittrans_reservation_email_subject', 'bookittrans_emailSubject' );
+  register_setting( 'bookittrans_options', 'bookit_outsource_reservation_email_subject', 'bookittrans_emailSubject' );
+  register_setting( 'bookittrans_options', 'bookittrans_confirmation_email_template' );
+  register_setting( 'bookittrans_options', 'bookittrans_reservation_email_template' );
+  register_setting( 'bookittrans_options', 'bookittrans_outsource_reservation_email_template' );
 }
 function bookittrans_emailSubject($value) {
   if(strlen($value) > 80) {
@@ -288,9 +338,29 @@ function bookittrans_isValidURL($value) {
 function display_resevation_details($object) {
   global $bookittrans_config;
   ?>
-  <?php wp_nonce_field( basename( __FILE__ ), 'bookittrans_nonce' ); ?>
+  <?php
+  wp_nonce_field( basename( __FILE__ ), 'bookittrans_nonce' );
+  $outsource = get_the_terms( $ID, 'outsource_companies', '', '', '' );
+  $term_args=array(
+    'hide_empty' => false,
+    'orderby' => 'name',
+    'order' => 'ASC'
+  );
+  $terms = get_terms('outsource_companies',$term_args);
+  ?>
   <table class="form-table">
     <tbody>
+      <tr>
+        <td valign="top"><label for="outsource_company"><?php echo __('Outsource Company', 'bookit') ?></label></td>
+        <td valign="top">
+          <select id="outsource_company" name="tax_input[outsource_companies][]">
+            <option value=""><?php echo __('In-House (not outsourced)', 'bookit') ?></option>
+            <?php foreach ($terms as $tag) { ?>
+            <option value="<?php echo $tag->term_id ?>" <?php if ($outsource[0]->term_id === $tag->term_id): ?>selected="selected"<?php endif; ?>><?php echo $tag->name ?></option>
+            <?php } ?>
+        </select>
+        </td>
+      </tr>
     <? foreach($bookittrans_config['fields'] as $key=>$value): ?>
       <tr>
         <td valign="top"><label for="<?=$value['key'] ?>"><?php _e( $value['name'], 'bookittrans' ); ?></label></td>
@@ -332,6 +402,9 @@ function display_notification_options() {
     <hr>
     <a href="#" class="button" id="send_reservation_confirmed"><?=__('Email Reservation Confirmed') ?></a>
     <p class="description"><?=__('Sends the user and admin an email stating the reservation has been confirmed.') ?></p>
+    <hr>
+    <a href="#" class="button" id="send_reservation_outsource"><?=__('Email Outsource Reservation') ?></a>
+    <p class="description"><?=__('Sends the selected outsource company a email containing the reservationd details.') ?></p>
   </div>
   <script>
   jQuery(function() { 
@@ -364,6 +437,21 @@ function display_notification_options() {
         jQuery('#notification_options .button').removeClass('button-disabled');
       });
     });
+    
+    jQuery('#send_reservation_outsource').live('click',function(e) {
+      e.preventDefault();
+      jQuery('#notification_options .button').addClass('button-disabled');
+      jQuery('#email_status').html('<?=__( '<div class="updated"><p>Sending, please wait&hellip;</p></div>', 'bookittrans') ?>');
+      
+      var data = {
+        bookittrans_action: 'send_reservation_outsource',
+        ID: <?=get_the_ID(); ?>
+      };
+      jQuery.post(ajaxurl, data, function(response) {
+        jQuery('#email_status').html('<div class="updated"><p>' + response + '</p></div>');
+        jQuery('#notification_options .button').removeClass('button-disabled');
+      });
+    });
   });
   </script>
   <?
@@ -376,12 +464,6 @@ function bookittrans_save_reservation($post_id, $reservation_details) {
   global $bookittrans_config;
   // Check post type for reservations
   if ( $reservation_details->post_type == 'bookit_reservation' ) {
-    //if ( !isset( $_POST['bookittrans_nonce'] ) || !wp_verify_nonce( $_POST['bookittrans_nonce'], basename( __FILE__ ) ) )
-      //return $post_id;
-  
-    /* Get the post type object. */
-    $post_type = get_post_type_object( $reservation_details->post_type  );
-
     /* Get the posted data and sanitize it for use as an HTML class. */
     foreach($bookittrans_config['fields'] as $key=>$value) {
 
@@ -399,9 +481,13 @@ function bookittrans_save_reservation($post_id, $reservation_details) {
 }
 
 // Add filters
-add_filter( 'enter_title_here', 'change_enter_title_text', 10, 2 );
-function change_enter_title_text( $text, $post ) {
-  return 'Enter the reservation confirmation code';
+add_filter( 'enter_title_here', 'bookittrans_change_enter_title_text', 10, 2 );
+function bookittrans_change_enter_title_text( $text, $post ) {
+  if( $post->post_type == 'bookit_reservation') {
+    return __( 'Enter the reservation confirmation code', 'bookittrans');
+  } else {
+    return $text;
+  }
 }
 add_filter( 'gettext', 'change_publish_button', 10, 2 );
 function change_publish_button( $translation, $text ) {
@@ -570,13 +656,105 @@ function bookittrans_randString($length=10, $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZ
 }
 
 
-add_action( 'admin_menu', 'bookittrans_menu' );
-function bookittrans_menu() {
+add_action( 'admin_menu', 'bookit_admin_menu' );
+function bookit_admin_menu() {
   add_options_page( 'Book It! Transportation Settings', 'Book It! Transportation', 'manage_options', 'bookittrans', 'bookittrans_options' );
+  remove_meta_box('outsource_companiesdiv', 'bookit_reservation', 'side');
 }
 function bookittrans_options() {
   if ( !current_user_can( 'manage_options' ) )  {
     wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
   }
   include( plugin_dir_path( __FILE__ ) . 'inc/options.php');
+}
+
+
+
+
+
+
+
+/*
+ * Example code showing how to hook WordPress to add fields to the taxonomny term edit screen.
+ * 
+ * This example is meant to show how, not to be a drop in example.
+ *
+ * This example was written in response to this question:
+ *
+ *    http://lists.automattic.com/pipermail/wp-hackers/2010-August/033671.html
+ *
+ * By:
+ *
+ *    Mike Schinkel (http://mikeschinkel.com/custom-wordpress-plugins/)
+ *
+ * NOTE:
+ *
+ *    This could easily become a plugin if it were fleshed out.
+ *    A class with static methods was used to minimize the variables & functions added to the global namespace.
+ *    wp_options was uses with one option be tax/term instead of via a serialize array because it aids in retrival
+ *    if there get to be a large number of tax/terms types. A taxonomy/term meta would be the prefered but WordPress
+ *    does not have one.
+ *
+ * This example is licensed GPLv2.
+ *
+ */
+
+// These are helper functions you can use elsewhere to access this info
+function get_taxonomy_term_type($taxonomy,$term_id) {
+  return get_option("_term_type_{$taxonomy}_{$term->term_id}");
+}
+function update_taxonomy_term_type($taxonomy,$term_id,$value) {
+  update_option("_term_type_{$taxonomy}_{$term_id}",$value);
+}
+
+//This initializes the class.
+TaxonomyTermTypes::on_load();
+
+//This should be called in your own code. This example uses two taxonomies: 'region' & 'opportunity'
+TaxonomyTermTypes::register_taxonomy(array('outsource_companies'));
+
+class TaxonomyTermTypes {
+  //This initializes the hooks to allow saving of the
+  static function on_load() {
+    add_action('created_term',array(__CLASS__,'term_type_update'),10,3);
+    add_action('edit_term',array(__CLASS__,'term_type_update'),10,3);
+  }
+  //This initializes the hooks to allow adding the dropdown to the form fields
+  static function register_taxonomy($taxonomy) {
+    if (!is_array($taxonomy))
+      $taxonomy = array($taxonomy);
+    foreach($taxonomy as $tax_name) {
+      add_action("{$tax_name}_add_form_fields",array(__CLASS__,"add_form_fields"));
+      add_action("{$tax_name}_edit_form_fields",array(__CLASS__,"edit_form_fields"),10,2);
+    }
+  }
+  // This displays the selections. Edit it to retrieve
+  static function add_form_fields($taxonomy) {
+    echo __('Company Email', 'bookit') . self::get_select_html();
+  }
+  // This displays the selections. Edit it to retrieve your own terms however you retrieve them.
+  static function get_select_html($selected='') {
+    $html =<<<HTML
+<input type="email" name="company_email" id="company_email" value="$selected">
+HTML;
+    return $html;
+  }
+    // This a table row with the drop down for an edit screen
+    static function edit_form_fields($term, $taxonomy) {
+    $selected = get_option("_term_type_{$taxonomy}_{$term->term_id}");
+    $select = self::get_select_html($selected);
+    $html =<<<HTML
+      <tr class="form-field form-required">
+        <th scope="row" valign="top"><label for="company_email">Company Email</label></th>
+        <td>$select</td>
+      </tr>
+HTML;
+    echo $html;
+  }
+  // These hooks are called after adding and editing to save $_POST['tag-term']
+  static function term_type_update($term_id, $tt_id, $taxonomy) {
+    if (isset($_POST['company_email'])) {
+      update_taxonomy_term_type($taxonomy,$term_id,$_POST['company_email']);
+    }
+  }
 }
