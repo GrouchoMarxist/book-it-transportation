@@ -1,6 +1,6 @@
 <?php
 /*
- * Book It! Transportation 1.0.2
+ * Book It! Transportation 1.0.3
  * http://www.benmarshall.me/book-it-transportation/
  */
 $plugin = get_plugin_data( str_replace('inc/','',plugin_dir_path( __FILE__)).'bookittransportation.php');
@@ -10,7 +10,9 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
   <?php screen_icon(); ?>
   <form action="options.php" method="post" id="bookittrans_options_form" name="bookittrans_options_form">
   <?php settings_fields('bookittrans_options'); ?>
+  <div style="float: right;margin-top:10px"><em><?php echo __('Something not work right? Have a feature request?') ?></em> <a href="http://www.benmarshall.me/bugs/" target="_blank" class="button button-primary"><?php echo __('Report a Bug', 'bookit') ?></a></div>
   <h2><?php echo __('Book It! Transportation') ?> &raquo; Settings</h2>
+  <hr>
   <h3 class="title"><?php echo __('Reservation Settings') ?></h3>
   <table class="form-table">
     <tr valign="top">
@@ -35,27 +37,125 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
       </td>
     </tr>
   </table>
+  <hr>
   <h3 class="title"><?php echo __('Email Settings') ?></h3>
-  <table class="form-table">
-    <tr valign="top">
-      <th scope="row">
-        <label for="bookittrans_reservation_email_subject"><?php echo __('New Reservation Subject') ?></label>
-      </th>
-      <td>
-        <input name="bookittrans_reservation_email_subject" type="text" id="bookittrans_reservation_email_subject" value="<?php echo get_option('bookittrans_reservation_email_subject'); ?>" class="regular-text">
-        <p class="description"><?php echo __('The subject of the email that get\'s sent for new reservation bookings.') ?></p>
-      </td>
-    </tr>
-    <tr valign="top">
-      <th scope="row">
-        <label for="bookittrans_confirmation_email_subject"><?php echo __('Reservation Confirmed Subject') ?></label>
-      </th>
-      <td>
-        <input name="bookittrans_confirmation_email_subject" type="text" id="bookittrans_confirmation_email_subject" value="<?php echo get_option('bookittrans_confirmation_email_subject'); ?>" class="regular-text">
-        <p class="description"><?php echo __('The subject of the email that get\'s sent for reservation confirmations.') ?></p>
-      </td>
-    </tr>
-  </table>
+  <div style="float:left;width:60%;">
+    <table class="form-table">
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookittrans_reservation_email_subject"><?php echo __('New Reservation Subject') ?></label>
+        </th>
+        <td>
+          <input name="bookittrans_reservation_email_subject" type="text" id="bookittrans_reservation_email_subject" value="<?php echo get_option('bookittrans_reservation_email_subject'); ?>" class="regular-text">
+          <p class="description"><?php echo __('The subject of the email that get\'s sent for new reservation bookings.') ?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookittrans_reservation_email_template"><?php echo __('Reservation Confirmed Body') ?></label>
+        </th>
+        <td>
+          <textarea name="bookittrans_reservation_email_template" id="bookittrans_reservation_email_template" rows="10" class="large-text code"><?php echo get_option('bookittrans_reservation_email_template'); ?></textarea>
+          <p class="description"><?php echo __('This is what will appear in the email that get\'s sent for new reservations.') ?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookittrans_confirmation_email_subject"><?php echo __('Reservation Confirmed Subject') ?></label>
+        </th>
+        <td>
+          <input name="bookittrans_confirmation_email_subject" type="text" id="bookittrans_confirmation_email_subject" value="<?php echo get_option('bookittrans_confirmation_email_subject'); ?>" class="regular-text">
+          <p class="description"><?php echo __('The subject of the email that get\'s sent for reservation confirmations.') ?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookittrans_confirmation_email_template"><?php echo __('Reservation Confirmed Body') ?></label>
+        </th>
+        <td>
+          <textarea name="bookittrans_confirmation_email_template" id="bookittrans_confirmation_email_template" rows="10" class="large-text code"><?php echo get_option('bookittrans_confirmation_email_template'); ?></textarea>
+          <p class="description"><?php echo __('This is what will appear in the email that get\'s sent for confirmations.') ?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookittrans_confirmation_email_subject"><?php echo __('Reservation Outsource Subject') ?></label>
+        </th>
+        <td>
+          <input name="bookit_outsource_reservation_email_subject" type="text" id="bookit_outsource_reservation_email_subject" value="<?php echo get_option('bookit_outsource_reservation_email_subject'); ?>" class="regular-text">
+          <p class="description"><?php echo __('The subject of the email that get\'s sent for reservations sent to outsource companies.') ?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookittrans_outsource_reservation_email_template"><?php echo __('Reservation Outsource Body') ?></label>
+        </th>
+        <td>
+          <textarea name="bookittrans_outsource_reservation_email_template" id="bookittrans_outsource_reservation_email_template" rows="10" class="large-text code"><?php echo get_option('bookittrans_outsource_reservation_email_template'); ?></textarea>
+          <p class="description"><?php echo __('This is what will appear in the email that get\'s sent to the reservation\'s booked outsource company.', 'bookit') ?></p>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div style="float:right; width:40%;">
+    <div class="metabox-holder">
+      <div class="postbox">
+        <h3 class="hndle"><?php echo __('Available Shortcodes', 'bookit') ?></h3>
+        <div class="inside">
+          <table>
+            <tbody>
+              <tr>
+                <td><code>[[TITLE]]</code></td><td><em><?php echo __('the reservation confirmation code', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[MONTH]]</code></td><td><em><?php echo __('the month (number) the reservation is booked for', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[DATE]]</code></td><td><em><?php echo __('the date the reservation is booked for', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[YEAR]]</code></td><td><em><?php echo __('the year the reservation is booked for', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[TIME]]</code></td><td><em><?php echo __('the time the reservation is booked for', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[CONTACT_NAME]]</code></td><td><em><?php echo __('the reservation\'s contact name', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[CONTACT_PHONE]]</code></td><td><em><?php echo __('the reservation\'s contact phone number', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[CONTACT_EMAIL]]</code></td><td><em><?php echo __('the reservation\'s contact email address', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[PICKUP]]</code></td><td><em><?php echo __('the pickup location for the reservation', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[DESTINATIONS]]</code></td><td><em><?php echo __('the destination(s) location for the reservation', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[VEHICLE]]</code></td><td><em><?php echo __('the vehicle booked for the reservation', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[EVENT_TYPE]]</code></td><td><em><?php echo __('the event type for the reservation', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[NUM_PASSENGERS]]</code></td><td><em><?php echo __('the number of passengers booked for the reservation', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[NUM_HOURS]]</code></td><td><em><?php echo __('the number of hours booked for the reservation', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+                <td><code>[[INSTRUCTIONS]]</code></td><td><em><?php echo __('client instructions for the reservation', 'bookit') ?></em></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="clear"></div>
   <p class="submit"><input type="submit" name="submit" id="submit" class="button button-primary" value="<?php echo __('Save Changes') ?>"></p>
   </form>
   <div class="metabox-holder">
