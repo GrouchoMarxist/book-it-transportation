@@ -251,6 +251,10 @@ function bookittrans_tags($html,$ary) {
     $find[] = '[['.strtoupper($key).']]';
     $replace[] = $value;
   }
+  if(isset($ary['month']) && isset($ary['date']) && isset($ary['year'])) {
+    $find[] = '[[RESERVATION_DATE_FULLTEXT]]';
+    $replace[] = date('l, F jS, Y g:ia',strtotime($ary['month'].'-'.$ary['date'].'-'.$ary['year'].' '.$ary['time']));
+  }
   $html = str_replace($find,$replace,$html);
   return $html;
 }
