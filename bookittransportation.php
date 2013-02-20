@@ -323,114 +323,10 @@ function display_resevation_details($object) {
     'order' => 'ASC'
   );
   $terms = get_terms('outsource_companies',$term_args);
-  ?>
-  <table class="form-table">
-    <tbody>
-      <tr>
-        <td valign="top"><label for="outsource_company"><?php echo __('Outsource Company', 'bookit') ?></label></td>
-        <td valign="top">
-          <select id="outsource_company" name="tax_input[outsource_companies][]">
-            <option value=""><?php echo __('In-House (not outsourced)', 'bookit') ?></option>
-            <?php foreach ($terms as $tag) { ?>
-            <option value="<?php echo $tag->term_id ?>" <?php if ($outsource[0]->term_id === $tag->term_id): ?>selected="selected"<?php endif; ?>><?php echo $tag->name ?></option>
-            <?php } ?>
-        </select>
-        </td>
-      </tr>
-    <? foreach($bookit_config['fields'] as $key=>$value): ?>
-      <tr>
-        <td valign="top"><label for="<?=$value['key'] ?>"><?php _e( $value['name'], 'bookit' ); ?></label></td>
-        <td valign="top">
-          <?
-          if($value['type'] === 'select') {
-            ?>
-            <select name="<?=$value['key'] ?>" id="<?=$value['key'] ?>">
-              <? foreach($value['options'] as $k=>$v): ?>
-              <option value="<?=$k ?>" <? if(get_post_meta( $object->ID, $value['key'], true ) == $k): ?>selected="selected"<? endif; ?>><?=$v ?></option>
-              <? endforeach; ?>
-            </select>
-            <?
-          } elseif($value['type'] === 'text' || $value['type'] === 'number'  || $value['type'] === 'tel' || $value['type'] === 'email') {
-            ?>
-            <input class="<?=$value['class'] ?>" type="<?=$value['type'] ?>" name="<?=$value['key'] ?>" id="<?=$value['key'] ?>" value="<?php echo esc_attr( get_post_meta( $object->ID, $value['key'], true ) ); ?>" <? if($value['type'] === 'number'): ?>min="0"<? endif; ?>>
-            <?
-          } elseif($value['type'] === 'textarea') {
-            ?>
-            <textarea name="<?=$value['key'] ?>" id="<?=$value['key'] ?>" cols="50" rows="5" class="<?=$value['class'] ?>"><?php echo esc_attr( get_post_meta( $object->ID, $value['key'], true ) ); ?></textarea>
-            <?
-          }
-          ?>
-        </td>
-      </tr>
-      <? endforeach; ?>
-    </tbody>
-  </table>
-  <?
+  include( plugin_dir_path( __FILE__ ) . 'inc/reservation-details.php' );
 }
 function display_notification_options() {
-  ?>
-  <p><?=__('Use the buttons below to send notification emails regarding this reservation.') ?> <span class="description"><b><?=__('Remember to save the reservation before sending notification emails.') ?></b></span></p>
-  <div id="email_status"></div>
-  <div id="notification_options">
-    <hr>
-    <a href="#" class="button" id="send_reservation_received"><?=__('Email Reservation Received') ?></a>
-    <p class="description"><?=__('Sends the user and admin an email stating the reservation has been received.') ?></p>
-    <hr>
-    <a href="#" class="button" id="send_reservation_confirmed"><?=__('Email Reservation Confirmed') ?></a>
-    <p class="description"><?=__('Sends the user and admin an email stating the reservation has been confirmed.') ?></p>
-    <hr>
-    <a href="#" class="button" id="send_reservation_outsource"><?=__('Email Outsource Reservation') ?></a>
-    <p class="description"><?=__('Sends the selected outsource company a email containing the reservationd details.') ?></p>
-  </div>
-  <script>
-  jQuery(function() {
-    jQuery('#send_reservation_received').live('click',function(e) {
-      e.preventDefault();
-      jQuery('#notification_options .button').addClass('button-disabled');
-      jQuery('#email_status').html('<?=__('<div class="updated"><p>Sending, please wait&hellip;</p></div>') ?>');
-
-      var data = {
-        bookit_action: 'send_reservation_received',
-        ID: <?=get_the_ID(); ?>
-      };
-      jQuery.post(ajaxurl, data, function(response) {
-        jQuery('#email_status').html('<div class="updated"><p>' + response + '</p></div>');
-        jQuery('#notification_options .button').removeClass('button-disabled');
-      });
-    });
-
-    jQuery('#send_reservation_confirmed').live('click',function(e) {
-      e.preventDefault();
-      jQuery('#notification_options .button').addClass('button-disabled');
-      jQuery('#email_status').html('<?=__('<div class="updated"><p>Sending, please wait&hellip;</p></div>') ?>');
-
-      var data = {
-        bookit_action: 'send_reservation_confirmed',
-        ID: <?=get_the_ID(); ?>
-      };
-      jQuery.post(ajaxurl, data, function(response) {
-        jQuery('#email_status').html('<div class="updated"><p>' + response + '</p></div>');
-        jQuery('#notification_options .button').removeClass('button-disabled');
-      });
-    });
-
-    jQuery('#send_reservation_outsource').live('click',function(e) {
-      e.preventDefault();
-      jQuery('#notification_options .button').addClass('button-disabled');
-      jQuery('#email_status').html('<?=__( '<div class="updated"><p>Sending, please wait&hellip;</p></div>', 'bookit') ?>');
-
-      var data = {
-        bookit_action: 'send_reservation_outsource',
-        ID: <?=get_the_ID(); ?>
-      };
-      jQuery.post(ajaxurl, data, function(response) {
-        jQuery('#email_status').html('<div class="updated"><p>' + response + '</p></div>');
-        jQuery('#notification_options .button').removeClass('button-disabled');
-      });
-    });
-  });
-  </script>
-  <?
+  include( plugin_dir_path( __FILE__ ) . 'inc/notification-options.php' );
 }
 add_action( 'save_post', 'bookit_save_reservation', 10, 2 );
 function bookit_save_reservation($post_id, $reservation_details) {
@@ -664,7 +560,6 @@ class TaxonomyTermTypes {
 HTML;
     return $html;
   }
-    // This a table row with the drop down for an edit screen
     static function edit_form_fields($term, $taxonomy) {
     $selected = get_option("_term_type_{$taxonomy}_{$term->term_id}");
     $select = self::get_select_html($selected);
@@ -676,10 +571,9 @@ HTML;
 HTML;
     echo $html;
   }
-  // These hooks are called after adding and editing to save $_POST['tag-term']
   static function term_type_update($term_id, $tt_id, $taxonomy) {
-    if (isset($_POST['company_email'])) {
-      update_taxonomy_term_type($taxonomy,$term_id,$_POST['company_email']);
+    if ( isset( $_POST['company_email'] ) ) {
+      update_taxonomy_term_type( $taxonomy, $term_id, $_POST['company_email'] );
     }
   }
 }
