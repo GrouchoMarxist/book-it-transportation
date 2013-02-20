@@ -22,11 +22,8 @@ function bookit_add_settings() {
 
 add_action( 'admin_init', 'bookit_admin' );
 function bookit_admin() {
-  global $pagenow;
+  global $pagenow, $bookit_config;
   add_meta_box( 'reservation_details', 'Reservation Details', 'display_resevation_details', 'bookit_reservation', 'normal', 'core' );
-  if( $pagenow == 'post.php' ) {
-    add_meta_box( 'reservation_notification_options', 'Notification Options', 'display_notification_options', 'bookit_reservation', 'side', 'core' );
-  }
   bookit_add_settings();
 }
 
@@ -611,15 +608,4 @@ function bookit_dont_publish( $data , $postarr ) {
   return $data;
 }
 
-if( $bookit_config['premium'] ) {
-  add_action( 'post_submitbox_misc_actions', 'bookit_publish_box' );
-  function bookit_publish_box( $post ) {
-    ?>
-    <div class="misc-pub-section misc-pub-section">
-      <h4><?php echo __('The Money Box', 'bookit')?></h4>
-      <label for="bookit_quoted_price"><?php echo __('Quoted Price:', 'bookit')?></label>
-      <input type="number" name="bookit_quoted_price" id="bookit_quoted_price" step=".1" min="0" value="<?php echo get_post_meta( $post->ID, 'bookit_quoted_price', true )?>">
-    </div>
-    <?
-  }
-}
+include( plugin_dir_path( __FILE__ ) . 'inc/premium.php' );

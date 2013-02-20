@@ -245,4 +245,4 @@ $bookit_config['reservation-status'] = get_option('bookit_default_reservation_st
 // Reservation recieved page
 $bookit_config['reservation-received-url'] = get_option('bookit_reservation_received_url');
 
-$bookit_config['premium'] = false;
+$bookit_config['premium'] = true;
