@@ -5,6 +5,9 @@ A complete management system for your transportation business enabling you to ea
 
 == Changelog ==
 
+= 1.0.4 =
+* Fixed publish bug when saving reservations using the 'Save Reservation' button
+
 = 1.0.3 =
 * Fixed placeholder bug for titles in posts
 * Updated code for to comply with WordPress standards
