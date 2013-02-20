@@ -38,7 +38,7 @@ A complete management system for your transportation business enabling you to ea
 <li>Added Book It! Reservation plugin details on settings page
 </ul>
 
-<h4>1.0.01</h4>
+<h4>Version 1.0.01</h4>
 <ul>
 <li>Fixed bug on plugin options page
 <li>Added the plugin options page
