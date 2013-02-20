@@ -108,6 +108,10 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
                 <td><code>[[TITLE]]</code></td><td><em><?php echo __('the reservation confirmation code', 'bookit') ?></em></td>
               </tr>
               <tr>
+                <td><code>[[RESERVATION_DATE_FULLTEXT]]</code></td><td><em><?php echo __('the reservation\'s full text date<br>(i.e. Saturday, May 11, 2014 9:30am)', 'bookit') ?></em></td>
+              </tr>
+              <tr>
+              <tr>
                 <td><code>[[MONTH]]</code></td><td><em><?php echo __('the month (number) the reservation is booked for', 'bookit') ?></em></td>
               </tr>
               <tr>

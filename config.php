@@ -194,8 +194,6 @@ $bookit_config['categories'] = array(
     )
   )
 );
-
-// The plugin's custom post types
 $bookit_config['post_types'] = array(
   'bookit_reservation' => array(
     'args' => array(
@@ -247,4 +245,4 @@ $bookit_config['reservation-status'] = get_option('bookit_default_reservation_st
 // Reservation recieved page
 $bookit_config['reservation-received-url'] = get_option('bookit_reservation_received_url');
 
-$bookit_config['enable_money_box'] = false;
+$bookit_config['premium'] = false;

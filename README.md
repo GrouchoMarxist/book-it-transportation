@@ -7,6 +7,8 @@ A complete management system for your transportation business enabling you to ea
 
 = 1.0.4 =
 * Fixed publish bug when saving reservations using the 'Save Reservation' button
+* Renamed all instances of bookittrans to bookit. WARNING: This will cause all reservations and related settings to be lost
+* Optimized some code and resolved a few bugs
 
 = 1.0.3 =
 * Fixed placeholder bug for titles in posts
@@ -29,7 +31,7 @@ A complete management system for your transportation business enabling you to ea
 * Fixed bug in reservation email template
 * Added the ability to update the default reservation status
 * Added Book It! Reservation plugin details on settings page
- 
+
 = 1.0.01 =
 * Fixed bug on plugin options page
 * Added the plugin options page

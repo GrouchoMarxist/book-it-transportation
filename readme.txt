@@ -2,6 +2,8 @@
 
 = 1.0.4 =
 * Fixed publish bug when saving reservations using the 'Save Reservation' button
+* Renamed all instances of bookittrans to bookit. WARNING: This will cause all reservations and related settings to be lost
+* Optimized some code and resolved a few bugs
 
 = 1.0.3 =
 * Fixed placeholder bug for titles in posts
@@ -17,14 +19,14 @@
 * Added the ability to submit a bug or feature request
 * Added Date Reserved column to reservation list
 * Added a date format shortchode for reservation dates in email templates
- 
+
 = 1.0.2 =
 * Added the ability to change the email subject of the new reservation booking emails
 * Added the ability to change the email subject of the reservation confirmation emails
 * Fixed bug in reservation email template
 * Added the ability to update the default reservation status
 * Added Book It! Reservation plugin details on settings page
- 
+
 = 1.0.01 =
 * Fixed bug on plugin options page
 * Added the plugin options page
