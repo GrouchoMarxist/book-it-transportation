@@ -10,15 +10,15 @@ Author URI: http://www.benmarshall.me
 include( plugin_dir_path( __FILE__ ) . 'config.php' );
 
 function bookit_add_settings() {
-  register_setting( 'bookit_options', 'bookit_reservation_received_url', 'bookit_isValidURL' );
-  register_setting( 'bookit_options', 'bookit_default_reservation_status' );
+  
   register_setting( 'bookit_options', 'bookit_confirmation_email_subject', 'bookit_emailSubject' );
-  register_setting( 'bookit_options', 'bookit_reservation_email_subject', 'bookit_emailSubject' );
   register_setting( 'bookit_options', 'bookit_outsource_reservation_email_subject', 'bookit_emailSubject' );
   register_setting( 'bookit_options', 'bookit_confirmation_email_template' );
-  register_setting( 'bookit_options', 'bookit_reservation_email_template' );
   register_setting( 'bookit_options', 'bookit_outsource_reservation_email_template' );
-
+  
+  register_setting( 'bookit_options', 'bookit_reservation_received_url', 'bookit_isValidURL' );
+  register_setting( 'bookit_options', 'bookit_default_reservation_status' );
+  register_setting( 'bookit_options', 'bookit_reservation_failed_url', 'bookit_isValidURL' );
   register_setting( 'bookit_options', 'bookit_emails_new_reservation_subject', 'bookit_emailSubject' );
   register_setting( 'bookit_options', 'bookit_emails_default_subject', 'bookit_emailSubject' );
   register_setting( 'bookit_options', 'bookit_emails_new_reservation_template' );
@@ -70,7 +70,7 @@ function bookit_process_post() {
       switch( $_POST['bookit_action'] ) {
         case 'send_reservation_received':
           if( isset( $_POST['ID'] ) ) {
-            if( email_reservation_received( $_POST['ID'] ) ) {
+            if( bookit_send_email( $_POST['ID'], 'new_reservation' ) === 'success' ) {
               echo __( 'Email successfully sent.', 'bookit' );
             } else {
               echo __( 'There was a problem sending the email.', 'bookit' );
@@ -131,33 +131,12 @@ function bookit_add_reservation() {
       wp_set_object_terms( $post_id, $_POST['destinations'], 'destinations', true );
       wp_set_object_terms( $post_id, $_POST['pickup'], 'pickup', true );
       wp_set_object_terms( $post_id, $_POST['event_type'], 'event_type', true );
-
-      $post = get_post( $post_id );
-      $meta = get_post_custom( $post_id );
-      $categories = array();
-      foreach( $bookit_config['categories'] as $key => $value ) {
-        $category         = wp_get_post_terms( $post_id, $key );
-        $categories[$key] = $category;
+      
+      if ( bookit_send_email( $post_id, 'new_reservation' ) === 'success' ) {
+        wp_redirect( $bookit_config['reservation-received-url'] );
+      } else {
+        wp_redirect( $bookit_config['reservation-failed-url'] );
       }
-      $ary = array(
-        'title' => $post->post_title
-      );
-      foreach( $bookit_config['fields'] as $key => $array ) {
-        $ary[$array['key']] = $meta[ $array['key']][0];
-      }
-      foreach( $categories as $tag => $array ) {
-        foreach( $array as $k => $v ) {
-          if( isset( $ary[$tag]) ) $ary[$tag] .= ', ';
-          $ary[$tag] .= $v->name;
-        }
-      }
-
-      $headers[] = 'From: '.get_bloginfo('admin_name').' <'.get_bloginfo( 'admin_email' ).'>';
-      $headers[] = 'Bcc: '.get_bloginfo('admin_name').' <'.get_bloginfo( 'admin_email' ).'>';
-      add_filter( 'wp_mail_content_type',create_function( '', 'return "text/html";' ) );
-      wp_mail( $_POST['contact_email'], $bookit_config['emails']['reservation_email_subject'], bookit_tags( $bookit_config['emails']['reservation_email_template'], $ary ), $headers );
-
-      wp_redirect( $bookit_config['reservation-received-url'] );
       exit;
     }
   }
@@ -167,71 +146,62 @@ function bookit_add_reservation() {
 // $type, string - Available options new_reservation
 function bookit_send_email( $ID, $type ) {
   global $bookit_config;
-
   $errors = array();
-
   $post   = get_post( $ID );
-  $meta   = get_post_custom( $ID );
-  $email  = isset($bookit_config['emails'][$type]) ? $bookit_config['emails'][$type] : false;
-
-  if ( $email ) {
-    $subject = isset($email['subject']) ? $email['subject'] : get_option('bookit_emails_default_subject');
-    $template = isset($email['subject']) ? $email['template'] : false;
-
-    if ( $template ) {
-
+  if ( $post ) {
+    $meta   = get_post_custom( $post->ID );
+    if ( isset($meta['contact_email'][0]) && is_email( $meta['contact_email'][0] ) ) {
+      $contact_name  = isset($meta['contact_name'][0]) ? $meta['contact_name'][0] : '';
+      $user_email = $meta['contact_email'][0];
+      $to = $contact_name . '<' . $user_email . '>';
+      $email  = isset($bookit_config['emails'][$type]) ? $bookit_config['emails'][$type] : false;
+      if ( $email ) {
+        $subject = isset($email['subject']) ? $email['subject'] : get_option('bookit_emails_default_subject');
+        $template = isset($email['template']) ? $email['template'] : false;
+        if ( $template ) {
+          $categories = array();
+          foreach( $bookit_config['categories'] as $key => $value ) {
+            $category = wp_get_post_terms( $post->ID, $key );
+            $categories[$key] = $category;
+          }
+          $ary = array(
+            'title' => $post->post_title
+          );
+          foreach( $bookit_config['fields'] as $key => $array ) {
+            $ary[$array['key']] = $meta[$array['key']][0];
+          }
+          foreach( $categories as $tag => $array ) {
+            foreach( $array as $k => $v ) {
+              if( isset( $ary[$tag] ))  $ary[$tag] .= ', ';
+              $ary[$tag] .= $v->name;
+            }
+          }
+          
+          $headers[] = 'From: ' . get_bloginfo( 'admin_name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>';
+          $headers[] = 'Bcc: ' . get_bloginfo( 'admin_name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>';
+          add_filter( 'wp_mail_content_type', create_function( '', 'return "text/html";' ) );
+          if ( ! wp_mail( $to, bookit_tags( $subject ), bookit_tags( $template, $ary ), $headers ) ) {
+            $errors[] = __( 'There was a problem sending the email.', 'bookit' );
+          }
+        } else {
+          $errors[] = __( 'Unable to locate the \'$template\' email template.', 'bookit' );
+        }
+      } else {
+        $errors[] = __( 'Unable to locate the \'$type\' email type.', 'bookit' );
+      }
     } else {
-
+      $errors[] = __( 'The user\'s email is invaild.', 'bookit' );
     }
   } else {
-    $errors[] = __( 'Unable to locate the \'$type\' email type.', 'bookit' );
+    $errors[] = __( 'Unable to load the post.', 'bookit' );
   }
-
-  if ( count($errors) === 0 ) {
-    $headers[] = 'From: ' . get_bloginfo( 'admin_name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>';
-    $headers[] = 'Bcc: ' . get_bloginfo( 'admin_name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>';
-
-    add_filter( 'wp_mail_content_type', create_function( '', 'return "text/html";' ) );
-
-    if ( wp_mail( $to, bookit_tags( $subject ), bookit_tags($bookit_config['emails']['reservation_email_template'],$ary), $headers );
-
+  if (count($errors) === 0 ) {
+    return $errors;
+  } else {
+    return 'success';
   }
 }
 
-// Send the reservation received email
-function email_reservation_received( $ID ) {
-  global $bookit_config;
-  $post       = get_post( $ID );
-  $meta       = get_post_custom( $ID );
-  $user_name  = $meta['contact_name'][0];
-  $user_email = $meta['contact_email'][0];
-  $subject    = $bookit_config['emails']['reservation_email_subject'];
-
-  $categories = array();
-  foreach( $bookit_config['categories'] as $key => $value ) {
-    $category = wp_get_post_terms( $ID, $key );
-    $categories[$key] = $category;
-  }
-
-  $ary = array(
-    'title' => $post->post_title
-  );
-  foreach( $bookit_config['fields'] as $key => $array ) {
-    $ary[$array['key']] = $meta[$array['key']][0];
-  }
-  foreach( $categories as $tag => $array ) {
-    foreach( $array as $k => $v ) {
-      if( isset( $ary[$tag] ))  $ary[$tag] .= ', ';
-      $ary[$tag] .= $v->name;
-    }
-  }
-
-  $headers[] = 'From: '.get_bloginfo( 'admin_name' ).' <' . get_bloginfo( 'admin_email' ) . '>';
-  $headers[] = 'Bcc: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
-  add_filter('wp_mail_content_type',create_function('', 'return "text/html";'));
-  wp_mail( $user_email, $bookit_config['emails']['reservation_email_subject'], bookit_tags($bookit_config['emails']['reservation_email_template'],$ary), $headers );
-  return true;
-}
 function email_reservation_outsource( $ID ) {
   global $bookit_config;
   $post = get_post($ID);
@@ -275,7 +245,7 @@ function email_reservation_confirmed($ID) {
   $meta = get_post_custom($ID);
   $user_name = $meta['contact_name'][0];
   $user_email = $meta['contact_email'][0];
-  $subject = $bookit_config['emails']['reservation_email_subject'];
+  $subject = $bookit_config['emails']['reservation_confirmation_email_subject'];
 
   $categories = array();
   foreach($bookit_config['categories'] as $key=>$value) {

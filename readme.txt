@@ -5,6 +5,7 @@
 * Renamed all instances of bookittrans to bookit. WARNING: This will cause all reservations and related settings to be lost
 * Optimized some code and resolved a few bugs
 * Split out premium features
+* Added a reservation failed redirect option
 
 = 1.0.3 =
 * Fixed placeholder bug for titles in posts

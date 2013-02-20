@@ -15,6 +15,7 @@ To include a reservation booking form in a blog post or page, use the <code>[[RE
 <li>Renamed all instances of bookittrans to bookit. WARNING: This will cause all reservations and related settings to be lost
 <li>Optimized some code and resolved a few bugs
 <li>Split out premium features
+<li>Added a reservation failed redirect option
 </ul>
 
 <h4>Version 1.0.3</h4>

@@ -73,17 +73,6 @@ $bookit_config['times'] = array(
   '24:30'=>'12:30pm'
 );
 
-$bookit_config['emails']['outsource_reservation_email_subject'] = get_option('bookit_outsource_reservation_email_subject');
-$bookit_config['emails']['outsource_reservation_email_template'] = get_option('bookit_outsource_reservation_email_template');
-
-// Reservation confirmation email template
-$bookit_config['emails']['reservation_confirmation_email_subject'] = get_option('bookit_confirmation_email_subject');
-$bookit_config['emails']['reservation_confirmation_email_confirmed_template'] = get_option('bookit_confirmation_email_template');
-
-// Reservation email template
-$bookit_config['emails']['reservation_email_subject'] = get_option('bookit_reservation_email_subject');
-$bookit_config['emails']['reservation_email_template'] = get_option('bookit_reservation_email_template');
-
 // Reservation fields.
 $bookit_config['fields'] = array(
   array('key'=>'contact_name','name'=>'Contact Name','type'=>'text','class'=>'regular-text','default'=>'','placeholder'=>'What can we call you by?'),
@@ -242,13 +231,20 @@ $bookit_config['required_fields'] = array('contact_name','contact_phone','contac
 // Default reservation status
 $bookit_config['reservation-status'] = get_option('bookit_default_reservation_status');
 
-// Reservation recieved page
 $bookit_config['reservation-received-url'] = get_option('bookit_reservation_received_url');
+$bookit_config['reservation-failed-url'] = get_option('bookit_reservation_failed_url');
 
 $bookit_config['premium'] = true;
 
 
 // Email settings
+$bookit_config['emails']['outsource_reservation_email_subject'] = get_option('bookit_outsource_reservation_email_subject');
+$bookit_config['emails']['outsource_reservation_email_template'] = get_option('bookit_outsource_reservation_email_template');
+
+// Reservation confirmation email template
+$bookit_config['emails']['reservation_confirmation_email_subject'] = get_option('bookit_confirmation_email_subject');
+$bookit_config['emails']['reservation_confirmation_email_confirmed_template'] = get_option('bookit_confirmation_email_template');
+
 $bookit_config['emails']['new_reservation'] = array(
   'subject'   => get_option('bookit_emails_new_reservation_subject'),
   'template'  => get_option('bookit_emails_new_reservation_template')

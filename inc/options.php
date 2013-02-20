@@ -27,6 +27,15 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
       </tr>
       <tr valign="top">
         <th scope="row">
+          <label for="bookit_reservation_failed_url"><?php echo __('Reservation Failed URL') ?></label>
+        </th>
+        <td>
+          <input name="bookit_reservation_failed_url" type="text" id="bookit_reservation_failed_url" value="<?php echo get_option('bookit_reservation_failed_url'); ?>" class="regular-text">
+          <p class="description"><?php echo __('The URL the user is directed to if the new reservation email failed to send out.)') ?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
           <label for="bookit_default_reservation_status"><?php echo __('Default Reservation Status') ?></label>
         </th>
         <td>
