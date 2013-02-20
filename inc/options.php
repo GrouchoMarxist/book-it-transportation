@@ -3,13 +3,13 @@
  * Book It! Transportation 1.0.3
  * http://www.benmarshall.me/book-it-transportation/
  */
-$plugin = get_plugin_data( str_replace('inc/','',plugin_dir_path( __FILE__)).'bookittransportation.php');
+$plugin = get_plugin_data( str_replace('inc/','',plugin_dir_path( __FILE__)).'bookitportation.php');
 $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace('inc/','',plugin_dir_path( __FILE__)).'readme.txt')));
 ?>
 <div class="wrap">
   <?php screen_icon(); ?>
-  <form action="options.php" method="post" id="bookittrans_options_form" name="bookittrans_options_form">
-  <?php settings_fields('bookittrans_options'); ?>
+  <form action="options.php" method="post" id="bookit_options_form" name="bookit_options_form">
+  <?php settings_fields('bookit_options'); ?>
   <div style="float: right;margin-top:10px"><em><?php echo __('Something not work right? Have a feature request?') ?></em> <a href="http://www.benmarshall.me/bugs/" target="_blank" class="button button-primary"><?php echo __('Report a Bug', 'bookit') ?></a></div>
   <h2><?php echo __('Book It! Transportation') ?> &raquo; Settings</h2>
   <hr>
@@ -17,21 +17,21 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
   <table class="form-table">
     <tr valign="top">
       <th scope="row">
-        <label for="bookittrans_reservation_received_url"><?php echo __('Reservation Received URL') ?></label>
+        <label for="bookit_reservation_received_url"><?php echo __('Reservation Received URL') ?></label>
       </th>
       <td>
-        <input name="bookittrans_reservation_received_url" type="text" id="bookittrans_reservation_received_url" value="<?php echo get_option('bookittrans_reservation_received_url'); ?>" class="regular-text">
+        <input name="bookit_reservation_received_url" type="text" id="bookit_reservation_received_url" value="<?php echo get_option('bookit_reservation_received_url'); ?>" class="regular-text">
         <p class="description"><?php echo __('The URL the user is directed to after they\'ve submitted the reservation form (e.g. thank you page, confirmation pending page, conversion page, etc.)') ?></p>
       </td>
     </tr>
     <tr valign="top">
       <th scope="row">
-        <label for="bookittrans_default_reservation_status"><?php echo __('Default Reservation Status') ?></label>
+        <label for="bookit_default_reservation_status"><?php echo __('Default Reservation Status') ?></label>
       </th>
       <td>
-        <select name="bookittrans_default_reservation_status" id="bookittrans_default_reservation_status">
-          <option value="confirmed"<? if(get_option('bookittrans_default_reservation_status') == 'confirmed'): ?>selected="selected"<? endif; ?>><?php echo __('Confirmed') ?></option>
-          <option value="pending-review"<? if(get_option('bookittrans_default_reservation_status') == 'pending-review'): ?>selected="selected"<? endif; ?>><?php echo __('Pending Review') ?></option>
+        <select name="bookit_default_reservation_status" id="bookit_default_reservation_status">
+          <option value="confirmed"<? if(get_option('bookit_default_reservation_status') == 'confirmed'): ?>selected="selected"<? endif; ?>><?php echo __('Confirmed') ?></option>
+          <option value="pending-review"<? if(get_option('bookit_default_reservation_status') == 'pending-review'): ?>selected="selected"<? endif; ?>><?php echo __('Pending Review') ?></option>
         </select>
         <p class="description"><?php echo __('Select the default status for new reservations.') ?></p>
       </td>
@@ -43,43 +43,43 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
     <table class="form-table">
       <tr valign="top">
         <th scope="row">
-          <label for="bookittrans_reservation_email_subject"><?php echo __('New Reservation Subject') ?></label>
+          <label for="bookit_reservation_email_subject"><?php echo __('New Reservation Subject') ?></label>
         </th>
         <td>
-          <input name="bookittrans_reservation_email_subject" type="text" id="bookittrans_reservation_email_subject" value="<?php echo get_option('bookittrans_reservation_email_subject'); ?>" class="regular-text">
+          <input name="bookit_reservation_email_subject" type="text" id="bookit_reservation_email_subject" value="<?php echo get_option('bookit_reservation_email_subject'); ?>" class="regular-text">
           <p class="description"><?php echo __('The subject of the email that get\'s sent for new reservation bookings.') ?></p>
         </td>
       </tr>
       <tr valign="top">
         <th scope="row">
-          <label for="bookittrans_reservation_email_template"><?php echo __('Reservation Confirmed Body') ?></label>
+          <label for="bookit_reservation_email_template"><?php echo __('Reservation Confirmed Body') ?></label>
         </th>
         <td>
-          <textarea name="bookittrans_reservation_email_template" id="bookittrans_reservation_email_template" rows="10" class="large-text code"><?php echo get_option('bookittrans_reservation_email_template'); ?></textarea>
+          <textarea name="bookit_reservation_email_template" id="bookit_reservation_email_template" rows="10" class="large-text code"><?php echo get_option('bookit_reservation_email_template'); ?></textarea>
           <p class="description"><?php echo __('This is what will appear in the email that get\'s sent for new reservations.') ?></p>
         </td>
       </tr>
       <tr valign="top">
         <th scope="row">
-          <label for="bookittrans_confirmation_email_subject"><?php echo __('Reservation Confirmed Subject') ?></label>
+          <label for="bookit_confirmation_email_subject"><?php echo __('Reservation Confirmed Subject') ?></label>
         </th>
         <td>
-          <input name="bookittrans_confirmation_email_subject" type="text" id="bookittrans_confirmation_email_subject" value="<?php echo get_option('bookittrans_confirmation_email_subject'); ?>" class="regular-text">
+          <input name="bookit_confirmation_email_subject" type="text" id="bookit_confirmation_email_subject" value="<?php echo get_option('bookit_confirmation_email_subject'); ?>" class="regular-text">
           <p class="description"><?php echo __('The subject of the email that get\'s sent for reservation confirmations.') ?></p>
         </td>
       </tr>
       <tr valign="top">
         <th scope="row">
-          <label for="bookittrans_confirmation_email_template"><?php echo __('Reservation Confirmed Body') ?></label>
+          <label for="bookit_confirmation_email_template"><?php echo __('Reservation Confirmed Body') ?></label>
         </th>
         <td>
-          <textarea name="bookittrans_confirmation_email_template" id="bookittrans_confirmation_email_template" rows="10" class="large-text code"><?php echo get_option('bookittrans_confirmation_email_template'); ?></textarea>
+          <textarea name="bookit_confirmation_email_template" id="bookit_confirmation_email_template" rows="10" class="large-text code"><?php echo get_option('bookit_confirmation_email_template'); ?></textarea>
           <p class="description"><?php echo __('This is what will appear in the email that get\'s sent for confirmations.') ?></p>
         </td>
       </tr>
       <tr valign="top">
         <th scope="row">
-          <label for="bookittrans_confirmation_email_subject"><?php echo __('Reservation Outsource Subject') ?></label>
+          <label for="bookit_confirmation_email_subject"><?php echo __('Reservation Outsource Subject') ?></label>
         </th>
         <td>
           <input name="bookit_outsource_reservation_email_subject" type="text" id="bookit_outsource_reservation_email_subject" value="<?php echo get_option('bookit_outsource_reservation_email_subject'); ?>" class="regular-text">
@@ -88,10 +88,10 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
       </tr>
       <tr valign="top">
         <th scope="row">
-          <label for="bookittrans_outsource_reservation_email_template"><?php echo __('Reservation Outsource Body') ?></label>
+          <label for="bookit_outsource_reservation_email_template"><?php echo __('Reservation Outsource Body') ?></label>
         </th>
         <td>
-          <textarea name="bookittrans_outsource_reservation_email_template" id="bookittrans_outsource_reservation_email_template" rows="10" class="large-text code"><?php echo get_option('bookittrans_outsource_reservation_email_template'); ?></textarea>
+          <textarea name="bookit_outsource_reservation_email_template" id="bookit_outsource_reservation_email_template" rows="10" class="large-text code"><?php echo get_option('bookit_outsource_reservation_email_template'); ?></textarea>
           <p class="description"><?php echo __('This is what will appear in the email that get\'s sent to the reservation\'s booked outsource company.', 'bookit') ?></p>
         </td>
       </tr>
