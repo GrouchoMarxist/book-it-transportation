@@ -34,6 +34,10 @@ function bookit_admin() {
 add_action( 'init', 'bookit_init' );
 function bookit_init() {
   global $bookit_config;
+  if (!session_id()) {
+    session_start();
+  }
+  
   if( ! get_option( 'bookit_default_reservation_status' ) ) {
      update_option( 'bookit_default_reservation_status', 'pending-review' );
   }
@@ -70,7 +74,7 @@ function bookit_process_post() {
       switch( $_POST['bookit_action'] ) {
         case 'send_reservation_received':
           if( isset( $_POST['ID'] ) ) {
-            if( bookit_send_email( $_POST['ID'], 'new_reservation' ) === 'success' ) {
+            if( bookit_send_email( $_POST['ID'], 'new_reservation' ) == 'success' ) {
               echo __( 'Email successfully sent.', 'bookit' );
             } else {
               echo __( 'There was a problem sending the email.', 'bookit' );
@@ -131,8 +135,7 @@ function bookit_add_reservation() {
       wp_set_object_terms( $post_id, $_POST['destinations'], 'destinations', true );
       wp_set_object_terms( $post_id, $_POST['pickup'], 'pickup', true );
       wp_set_object_terms( $post_id, $_POST['event_type'], 'event_type', true );
-      
-      if ( bookit_send_email( $post_id, 'new_reservation' ) === 'success' ) {
+      if ( bookit_send_email( $post_id, 'new_reservation' ) == 'success' ) {
         wp_redirect( $bookit_config['reservation-received-url'] );
       } else {
         wp_redirect( $bookit_config['reservation-failed-url'] );
@@ -195,7 +198,7 @@ function bookit_send_email( $ID, $type ) {
   } else {
     $errors[] = __( 'Unable to load the post.', 'bookit' );
   }
-  if (count($errors) === 0 ) {
+  if (count($errors) == 0 ) {
     return $errors;
   } else {
     return 'success';
@@ -387,14 +390,18 @@ function bookit_shortcode_reservation_form( $atts ) {
     <div class="message-box-title"><?=__('Sorry, there was a problem processing your reservation, see below.') ?></div>
     <div class="message-box-content"><ul><?
     foreach($_SESSION['bookit']['errors'] as $key=>$value):
-      if($value === 'contact_name'):
+      if($value == 'contact_name'):
         echo '<li>'.__('Please enter your <strong>name</strong>.');
-      elseif($value === 'contact_phone'):
+      elseif($value == 'contact_phone'):
         echo '<li>'.__('Please enter your <strong>phone number</strong>.');
-      elseif($value === 'contact_email'):
+      elseif($value == 'contact_email'):
         echo '<li>'.__('Please enter your <strong>email address</strong>.');
-      elseif($value === 'num_passengers'):
+      elseif($value == 'num_passengers'):
         echo '<li>'.__('Please enter the <strong>number of passengers</strong>.');
+      elseif($value == 'vehicle'):
+        echo '<li>'.__('Please select your <strong>vehicle</strong> preference.');
+      elseif($value == 'event_type'):
+        echo '<li>'.__('Please select the <strong>event type</strong>.');
       endif;
     endforeach;
     ?></ul></div>
@@ -410,11 +417,11 @@ function bookit_shortcode_reservation_form( $atts ) {
       <div class="bookit-label"><label for="<?=$value['key'] ?>"><?=$value['name'] ?></label></div>
       <div class="bookit-input">
         <?
-        if($value['type'] === 'text' || $value['type'] === 'number'  || $value['type'] === 'tel' || $value['type'] === 'email'): ?>
-          <input type="<?=$value['type'] ?>" name="<?=$value['key'] ?>" id="<?=$value['key'] ?>" value="<?=stripslashes($bookit_config['post'][$value['key']]) ?>" placeholder="<?=$value['placeholder'] ?>" <? if($value['type'] === 'number'): ?>min="0"<? endif; ?>>
-        <? elseif($value['type'] === 'textarea'): ?>
+        if($value['type'] == 'text' || $value['type'] == 'number'  || $value['type'] == 'tel' || $value['type'] == 'email'): ?>
+          <input type="<?=$value['type'] ?>" name="<?=$value['key'] ?>" id="<?=$value['key'] ?>" value="<?=stripslashes($bookit_config['post'][$value['key']]) ?>" placeholder="<?=$value['placeholder'] ?>" <? if($value['type'] == 'number'): ?>min="0"<? endif; ?>>
+        <? elseif($value['type'] == 'textarea'): ?>
           <textarea name="<?=$value['key'] ?>" id="<?=$value['key'] ?>" cols="50" rows="5"><?=stripslashes($bookit_config['post'][$value['key']]) ?></textarea>
-        <? elseif($value['type'] === 'select'): ?>
+        <? elseif($value['type'] == 'select'): ?>
           <select name="<?=$value['key'] ?>" id="<?=$value['key'] ?>">
             <? foreach($value['options'] as $k=>$v): ?>
             <option value="<?=$k ?>" <? if(stripslashes($bookit_config['post'][$value['key']]) == $k): ?>selected="selected"<? endif; ?>><?=$v ?></option>
