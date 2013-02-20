@@ -3,6 +3,10 @@ Book It! Transportation WordPress Plugin
 
 A complete management system for your transportation business enabling you to easily accept and manage your transportation bookings.
 
+<h3>Implementation</h3>
+
+To include a reservation booking form in a blog post or page, use the <code>[[RESERVATION_DATE_FULLTEXT]]</code>.
+
 <h3>Changelog</h3>
 
 <h4>Version 1.0.4</h4>

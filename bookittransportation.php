@@ -283,7 +283,7 @@ function bookit_tags($html,$ary) {
     $find[] = '[[RESERVATION_DATE_FULLTEXT]]';
     $replace[] = date('l, F jS, Y g:ia',strtotime($ary['month'].'-'.$ary['date'].'-'.$ary['year'].' '.$ary['time']));
   }
-  $html = str_replace($find,$replace,$html);
+  $html = str_replace( $find, $replace, $html );
   return $html;
 }
 
@@ -364,6 +364,7 @@ function change_publish_button( $translation, $text ) {
     }
   return $translation;
 }
+// Add reservation form shortcode
 add_shortcode( 'bookit_reservation_form', 'bookit_shortcode_reservation_form' );
 function bookit_shortcode_reservation_form( $atts ) {
   global $bookit_config, $post;
