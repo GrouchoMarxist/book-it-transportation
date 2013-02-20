@@ -7,7 +7,7 @@ Version: 1.0.4
 Author: Ben Marshall
 Author URI: http://www.benmarshall.me
 */
-include( plugin_dir_path( __FILE__ ) . 'config.php');
+include( plugin_dir_path( __FILE__ ) . 'config.php' );
 
 function bookit_add_settings() {
   register_setting( 'bookit_options', 'bookit_reservation_received_url', 'bookit_isValidURL' );
@@ -24,7 +24,7 @@ add_action( 'admin_init', 'bookit_admin' );
 function bookit_admin() {
   global $pagenow;
   add_meta_box( 'reservation_details', 'Reservation Details', 'display_resevation_details', 'bookit_reservation', 'normal', 'core' );
-  if( $pagenow == 'post.php') {
+  if( $pagenow == 'post.php' ) {
     add_meta_box( 'reservation_notification_options', 'Notification Options', 'display_notification_options', 'bookit_reservation', 'side', 'core' );
   }
   bookit_add_settings();
@@ -33,13 +33,13 @@ function bookit_admin() {
 add_action( 'init', 'bookit_init' );
 function bookit_init() {
   global $bookit_config;
-  if(!get_option('bookit_default_reservation_status')) {
+  if( ! get_option( 'bookit_default_reservation_status' ) ) {
      update_option( 'bookit_default_reservation_status', 'pending-review' );
   }
-  if(!get_option('bookit_confirmation_email_subject')) {
+  if( ! get_option( 'bookit_confirmation_email_subject' ) ) {
      update_option( 'bookit_confirmation_email_subject', 'Your reservation has beed confirmed' );
   }
-  if(!get_option('bookit_reservation_email_subject')) {
+  if( ! get_option( 'bookit_reservation_email_subject' ) ) {
      update_option( 'bookit_reservation_email_subject', 'We\'ve received your reservation request' );
   }
 
@@ -50,52 +50,52 @@ function bookit_init() {
 
 function bookit_add_post_types() {
   global $bookit_config;
-  foreach($bookit_config['post_types'] as $key=>$value) {
+  foreach( $bookit_config['post_types'] as $key => $value ) {
     register_post_type( $key , $value['args'] );
   }
 }
 
 function bookit_add_categories() {
   global $bookit_config;
-  foreach( $bookit_config['categories'] as $key=>$value) {
+  foreach( $bookit_config['categories'] as $key => $value ) {
     register_taxonomy( $key, $value['post_types'], array(
-      'hierarchical' => true,
-      'labels' => $value['labels'],
-      'show_ui' => true,
+      'hierarchical'      => true,
+      'labels'            => $value['labels'],
+      'show_ui'           => true,
       'show_admin_column' => true,
-      'query_var' => false,
-      'rewrite' => false)
-    );
+      'query_var'         => false,
+      'rewrite'           => false
+    ) );
   }
 }
 
 function bookit_process_post() {
-  if( $_POST) {
-    if( isset($_POST['bookit_action'])) {
-      switch( $_POST['bookit_action']) {
+  if( $_POST ) {
+    if( isset( $_POST['bookit_action'] ) ) {
+      switch( $_POST['bookit_action'] ) {
         case 'send_reservation_received':
-          if( isset($_POST['ID'])) {
-            if( email_reservation_received($_POST['ID'])) {
-              echo __('Email successfully sent.');
+          if( isset( $_POST['ID'] ) ) {
+            if( email_reservation_received( $_POST['ID'] ) ) {
+              echo __( 'Email successfully sent.', 'bookit' );
             } else {
-              echo __('There was a problem sending the email.');
+              echo __( 'There was a problem sending the email.', 'bookit' );
             }
           }
           die();
           break;
        case 'send_reservation_confirmed':
-          if( isset($_POST['ID'])) {
-            if( email_reservation_confirmed($_POST['ID'])) {
-              echo __('Email successfully sent.');
+          if( isset( $_POST['ID'] ) ) {
+            if( email_reservation_confirmed( $_POST['ID'] ) ) {
+              echo __( 'Email successfully sent.', 'bookit' );
             } else {
-              echo __('There was a problem sending the email.');
+              echo __( 'There was a problem sending the email.', 'bookit' );
             }
           }
           die();
           break;
         case 'send_reservation_outsource':
-          if( isset($_POST['ID'])) {
-            echo email_reservation_outsource($_POST['ID']);
+          if( isset( $_POST['ID'] ) ) {
+            echo email_reservation_outsource( $_POST['ID'] );
           }
           die();
           break;
@@ -106,63 +106,61 @@ function bookit_process_post() {
     }
   }
 }
-
-// Add a new resevation from the shortcode
 function bookit_add_reservation() {
   global $bookit_config;
   $page = $_POST['page'];
   $errors = array();
-  foreach($bookit_config['required_fields'] as $key=>$value) {
-    if(!isset($_POST[$value]) || isset($_POST[$value]) && !$_POST[$value]) {
+  foreach( $bookit_config['required_fields'] as $key => $value ) {
+    if( ! isset( $_POST[$value] ) || isset( $_POST[$value] ) && ! $_POST[ $value ]) {
       $errors[] = $value;
     }
   }
-  if(count($errors) > 0) {
-    $_SESSION['bookit']['post'] = $_POST;
+  if( count( $errors ) > 0 ) {
+    $_SESSION['bookit']['post']   = $_POST;
     $_SESSION['bookit']['errors'] = $errors;
     wp_redirect( $page );
     exit;
   } else {
     $post = array(
-      'comment_status' => 'closed', // 'closed' means no comments.
-      'ping_status'    => 'closed', // 'closed' means pingbacks or trackbacks turned off
-      'post_author'    => get_current_user_id(), //The user ID number of the author.
-      'post_status'    => $bookit_config['reservation-status'], //Set the status of the new post.
-      'post_title'     => bookit_randString(), //The title of your post.
+      'comment_status' => 'closed',
+      'ping_status'    => 'closed',
+      'post_author'    => get_current_user_id(),
+      'post_status'    => $bookit_config['reservation-status'],
+      'post_title'     => bookit_randString(),
       'post_type'      => 'bookit_reservation'
     );
 
     $post_id = wp_insert_post( $post );
-    if($post_id) {
-      wp_set_object_terms($post_id, $_POST['vehicle'], 'vehicle', true);
-      wp_set_object_terms($post_id, $_POST['destinations'], 'destinations', true);
-      wp_set_object_terms($post_id, $_POST['pickup'], 'pickup', true);
-      wp_set_object_terms($post_id, $_POST['event_type'], 'event_type', true);
+    if( $post_id ) {
+      wp_set_object_terms( $post_id, $_POST['vehicle'], 'vehicle', true );
+      wp_set_object_terms( $post_id, $_POST['destinations'], 'destinations', true );
+      wp_set_object_terms( $post_id, $_POST['pickup'], 'pickup', true );
+      wp_set_object_terms( $post_id, $_POST['event_type'], 'event_type', true );
 
-      $post = get_post($post_id);
-      $meta = get_post_custom($post_id);
+      $post = get_post( $post_id );
+      $meta = get_post_custom( $post_id );
       $categories = array();
-      foreach($bookit_config['categories'] as $key=>$value) {
-        $category = wp_get_post_terms( $post_id, $key );
+      foreach( $bookit_config['categories'] as $key => $value ) {
+        $category         = wp_get_post_terms( $post_id, $key );
         $categories[$key] = $category;
       }
       $ary = array(
         'title' => $post->post_title
       );
-      foreach($bookit_config['fields'] as $key=>$array) {
-        $ary[$array['key']] = $meta[$array['key']][0];
+      foreach( $bookit_config['fields'] as $key => $array ) {
+        $ary[$array['key']] = $meta[ $array['key']][0];
       }
-      foreach($categories as $tag=>$array) {
-        foreach($array as $k=>$v) {
-          if(isset($ary[$tag])) $ary[$tag] .= ', ';
+      foreach( $categories as $tag => $array ) {
+        foreach( $array as $k => $v ) {
+          if( isset( $ary[$tag]) ) $ary[$tag] .= ', ';
           $ary[$tag] .= $v->name;
         }
       }
 
-      $headers[] = 'From: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
-      $headers[] = 'Bcc: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
-      add_filter('wp_mail_content_type',create_function('', 'return "text/html";'));
-      wp_mail( $_POST['contact_email'], $bookit_config['emails']['reservation_email_subject'], bookit_tags($bookit_config['emails']['reservation_email_template'],$ary), $headers );
+      $headers[] = 'From: '.get_bloginfo('admin_name').' <'.get_bloginfo( 'admin_email' ).'>';
+      $headers[] = 'Bcc: '.get_bloginfo('admin_name').' <'.get_bloginfo( 'admin_email' ).'>';
+      add_filter( 'wp_mail_content_type',create_function( '', 'return "text/html";' ) );
+      wp_mail( $_POST['contact_email'], $bookit_config['emails']['reservation_email_subject'], bookit_tags( $bookit_config['emails']['reservation_email_template'], $ary ), $headers );
 
       wp_redirect( $bookit_config['reservation-received-url'] );
       exit;
@@ -170,16 +168,16 @@ function bookit_add_reservation() {
   }
 }
 // Send the reservation received email
-function email_reservation_received($ID) {
+function email_reservation_received( $ID ) {
   global $bookit_config;
-  $post = get_post($ID);
-  $meta = get_post_custom($ID);
-  $user_name = $meta['contact_name'][0];
+  $post       = get_post( $ID );
+  $meta       = get_post_custom( $ID );
+  $user_name  = $meta['contact_name'][0];
   $user_email = $meta['contact_email'][0];
-  $subject = $bookit_config['emails']['reservation_email_subject'];
+  $subject    = $bookit_config['emails']['reservation_email_subject'];
 
   $categories = array();
-  foreach($bookit_config['categories'] as $key=>$value) {
+  foreach( $bookit_config['categories'] as $key => $value ) {
     $category = wp_get_post_terms( $ID, $key );
     $categories[$key] = $category;
   }
@@ -187,17 +185,17 @@ function email_reservation_received($ID) {
   $ary = array(
     'title' => $post->post_title
   );
-  foreach($bookit_config['fields'] as $key=>$array) {
+  foreach( $bookit_config['fields'] as $key => $array ) {
     $ary[$array['key']] = $meta[$array['key']][0];
   }
-  foreach($categories as $tag=>$array) {
-    foreach($array as $k=>$v) {
-      if(isset($ary[$tag])) $ary[$tag] .= ', ';
+  foreach( $categories as $tag => $array ) {
+    foreach( $array as $k => $v ) {
+      if( isset( $ary[$tag] ))  $ary[$tag] .= ', ';
       $ary[$tag] .= $v->name;
     }
   }
 
-  $headers[] = 'From: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
+  $headers[] = 'From: '.get_bloginfo( 'admin_name' ).' <' . get_bloginfo( 'admin_email' ) . '>';
   $headers[] = 'Bcc: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
   add_filter('wp_mail_content_type',create_function('', 'return "text/html";'));
   wp_mail( $user_email, $bookit_config['emails']['reservation_email_subject'], bookit_tags($bookit_config['emails']['reservation_email_template'],$ary), $headers );
@@ -240,7 +238,6 @@ function email_reservation_outsource( $ID ) {
     return __('<b>This reservation isn\'t currently assiged to an outsource company.</b> Be sure an outsource company is selected and the reservation has been saved.', 'bookit');
   }
 }
-// Send the reservation confirmed email
 function email_reservation_confirmed($ID) {
   global $bookit_config;
   $post = get_post($ID);
@@ -314,7 +311,6 @@ function bookit_isValidURL($value) {
   return $value;
 }
 
-// Function that prints out the HTML for the edit screen section.
 function display_resevation_details($object) {
   global $bookit_config;
   ?>
@@ -436,15 +432,10 @@ function display_notification_options() {
   </script>
   <?
 }
-
-// save_post is an action triggered whenever a post or page is created or updated, which could be from an import, post/page edit form, xmlrpc, or post by email.
 add_action( 'save_post', 'bookit_save_reservation', 10, 2 );
-// Callback function when a reservation post is saved.
 function bookit_save_reservation($post_id, $reservation_details) {
   global $bookit_config;
-  // Check post type for reservations
   if ( $reservation_details->post_type == 'bookit_reservation' ) {
-    /* Get the posted data and sanitize it for use as an HTML class. */
     foreach($bookit_config['fields'] as $key=>$value) {
 
       $field = ( isset( $_POST[$value['key']] ) ? $_POST[$value['key']] : $value['default'] );
@@ -477,8 +468,6 @@ function change_publish_button( $translation, $text ) {
     }
   return $translation;
 }
-
-// Add the reservation shortcode
 add_shortcode( 'bookit_reservation_form', 'bookit_shortcode_reservation_form' );
 function bookit_shortcode_reservation_form( $atts ) {
   global $bookit_config, $post;
@@ -592,8 +581,6 @@ function bookit_shortcode_reservation_form( $atts ) {
   unset($_SESSION['bookit']['post']);
   return $html;
 }
-
-// Add nessary JS
 add_action('wp_enqueue_scripts', 'bookit_add_scipts');
 function bookit_add_scipts() {
   wp_enqueue_script(
@@ -651,19 +638,13 @@ function update_taxonomy_term_type($taxonomy,$term_id,$value) {
   update_option("_term_type_{$taxonomy}_{$term_id}",$value);
 }
 
-//This initializes the class.
 TaxonomyTermTypes::on_load();
-
-//This should be called in your own code. This example uses two taxonomies: 'region' & 'opportunity'
-TaxonomyTermTypes::register_taxonomy(array('outsource_companies'));
-
+TaxonomyTermTypes::register_taxonomy( array( 'outsource_companies' ) );
 class TaxonomyTermTypes {
-  //This initializes the hooks to allow saving of the
   static function on_load() {
-    add_action('created_term',array(__CLASS__,'term_type_update'),10,3);
-    add_action('edit_term',array(__CLASS__,'term_type_update'),10,3);
+    add_action( 'created_term', array( __CLASS__, 'term_type_update' ), 10, 3 );
+    add_action( 'edit_term', array( __CLASS__, 'term_type_update' ), 10, 3 );
   }
-  //This initializes the hooks to allow adding the dropdown to the form fields
   static function register_taxonomy($taxonomy) {
     if (!is_array($taxonomy))
       $taxonomy = array($taxonomy);
@@ -703,46 +684,46 @@ HTML;
   }
 }
 
-add_filter('manage_edit-bookit_reservation_columns', 'add_new_bookit_reservation_columns');
-function add_new_bookit_reservation_columns($bookit_reservation_columns) {
-  $bookit_reservation_columns['cb'] = '<input type="checkbox" />';
-  $bookit_reservation_columns['title'] = _x('Confirmation Code', 'column name');
-  $bookit_reservation_columns['date_reserved'] = __('Date Reserved');
+add_filter( 'manage_edit-bookit_reservation_columns', 'add_new_bookit_reservation_columns' );
+function add_new_bookit_reservation_columns( $bookit_reservation_columns ) {
+  $bookit_reservation_columns['cb']             = '<input type="checkbox">';
+  $bookit_reservation_columns['title']          = _x( 'Confirmation Code', 'column name');
+  $bookit_reservation_columns['date_reserved']  = __( 'Date Reserved', 'bookit' );
   return $bookit_reservation_columns;
 }
 
-add_action('manage_bookit_reservation_posts_custom_column', 'manage_bookit_reservation_columns', 10, 2);
-function manage_bookit_reservation_columns($column_name, $id) {
+add_action( 'manage_bookit_reservation_posts_custom_column', 'manage_bookit_reservation_columns', 10, 2 );
+function manage_bookit_reservation_columns( $column_name, $id ) {
   global $post;
-  switch ($column_name) {
+  switch ( $column_name ) {
     case 'date_reserved':
-      $month = get_post_meta( $post->ID , 'month' , true );
-      $date = get_post_meta( $post->ID , 'date' , true );
-      $year = get_post_meta( $post->ID , 'year' , true );
-      $time = get_post_meta( $post->ID , 'time' , true );
-      echo date('M. j, Y g:ia', strtotime($month.'-'.$date.'-'.$year.' '.$time));
+      $month  = get_post_meta( $post->ID , 'month' , true );
+      $date   = get_post_meta( $post->ID , 'date' , true );
+      $year   = get_post_meta( $post->ID , 'year' , true );
+      $time   = get_post_meta( $post->ID , 'time' , true );
+      echo date( 'M. j, Y g:ia', strtotime($month . '-' . $date . '-' . $year . ' ' . $time) );
       break;
     default:
       break;
   }
 }
 
-add_filter('wp_insert_post_data' , 'bookit_dont_publish' , '99', 2);
+add_filter( 'wp_insert_post_data' , 'bookit_dont_publish' , '99', 2 );
 function bookit_dont_publish( $data , $postarr ) {
-  if($data['post_type'] == 'bookit_reservation'){
+  if ($data['post_type'] == 'bookit_reservation' ){
     $data['post_status'] = 'draft';
   }
   return $data;
 }
 
-if($bookit_config['premium']) {
+if( $bookit_config['premium'] ) {
   add_action( 'post_submitbox_misc_actions', 'bookit_publish_box' );
-  function bookit_publish_box($post) {
+  function bookit_publish_box( $post ) {
     ?>
     <div class="misc-pub-section misc-pub-section">
-      <h4><?php echo __('The Money Box', 'bookit') ?></h4>
-      <label for="bookit_quoted_price"><?php echo __('Quoted Price:','bookit') ?></label>
-      <input type="number" name="bookit_quoted_price" id="bookit_quoted_price" step=".1" min="0" value="<?php echo get_post_meta($post->ID, 'bookit_quoted_price', true) ?>">
+      <h4><?php echo __('The Money Box', 'bookit')?></h4>
+      <label for="bookit_quoted_price"><?php echo __('Quoted Price:', 'bookit')?></label>
+      <input type="number" name="bookit_quoted_price" id="bookit_quoted_price" step=".1" min="0" value="<?php echo get_post_meta( $post->ID, 'bookit_quoted_price', true )?>">
     </div>
     <?
   }

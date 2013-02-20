@@ -3,7 +3,7 @@
  * Book It! Transportation 1.0.3
  * http://www.benmarshall.me/book-it-transportation/
  */
-$plugin = get_plugin_data( str_replace('inc/','',plugin_dir_path( __FILE__)).'bookitportation.php');
+$plugin = get_plugin_data( str_replace('inc/','',plugin_dir_path( __FILE__)).'bookittransportation.php');
 $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace('inc/','',plugin_dir_path( __FILE__)).'readme.txt')));
 ?>
 <div class="wrap">
@@ -14,29 +14,42 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
   <h2><?php echo __('Book It! Transportation') ?> &raquo; Settings</h2>
   <hr>
   <h3 class="title"><?php echo __('Reservation Settings') ?></h3>
-  <table class="form-table">
-    <tr valign="top">
-      <th scope="row">
-        <label for="bookit_reservation_received_url"><?php echo __('Reservation Received URL') ?></label>
-      </th>
-      <td>
-        <input name="bookit_reservation_received_url" type="text" id="bookit_reservation_received_url" value="<?php echo get_option('bookit_reservation_received_url'); ?>" class="regular-text">
-        <p class="description"><?php echo __('The URL the user is directed to after they\'ve submitted the reservation form (e.g. thank you page, confirmation pending page, conversion page, etc.)') ?></p>
-      </td>
-    </tr>
-    <tr valign="top">
-      <th scope="row">
-        <label for="bookit_default_reservation_status"><?php echo __('Default Reservation Status') ?></label>
-      </th>
-      <td>
-        <select name="bookit_default_reservation_status" id="bookit_default_reservation_status">
-          <option value="confirmed"<? if(get_option('bookit_default_reservation_status') == 'confirmed'): ?>selected="selected"<? endif; ?>><?php echo __('Confirmed') ?></option>
-          <option value="pending-review"<? if(get_option('bookit_default_reservation_status') == 'pending-review'): ?>selected="selected"<? endif; ?>><?php echo __('Pending Review') ?></option>
-        </select>
-        <p class="description"><?php echo __('Select the default status for new reservations.') ?></p>
-      </td>
-    </tr>
-  </table>
+  <div style="float:left;width:60%;">
+    <table class="form-table">
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookit_reservation_received_url"><?php echo __('Reservation Received URL') ?></label>
+        </th>
+        <td>
+          <input name="bookit_reservation_received_url" type="text" id="bookit_reservation_received_url" value="<?php echo get_option('bookit_reservation_received_url'); ?>" class="regular-text">
+          <p class="description"><?php echo __('The URL the user is directed to after they\'ve submitted the reservation form (e.g. thank you page, confirmation pending page, conversion page, etc.)') ?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookit_default_reservation_status"><?php echo __('Default Reservation Status') ?></label>
+        </th>
+        <td>
+          <select name="bookit_default_reservation_status" id="bookit_default_reservation_status">
+            <option value="confirmed"<? if(get_option('bookit_default_reservation_status') == 'confirmed'): ?>selected="selected"<? endif; ?>><?php echo __('Confirmed') ?></option>
+            <option value="pending-review"<? if(get_option('bookit_default_reservation_status') == 'pending-review'): ?>selected="selected"<? endif; ?>><?php echo __('Pending Review') ?></option>
+          </select>
+          <p class="description"><?php echo __('Select the default status for new reservations.') ?></p>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div style="float:right; width:40%;">
+    <div class="metabox-holder">
+      <div class="postbox">
+        <h3 class="hndle"><?php echo $plugin['Name'] ?> <?php echo __( 'WordPress Plugin', 'bookit') ?></h3>
+        <div class="inside">
+          <h4><?php echo __( 'Page &amp; Post Shortcodes', 'bookit') ?></h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="clear"></div>
   <hr>
   <h3 class="title"><?php echo __('Email Settings') ?></h3>
   <div style="float:left;width:60%;">
@@ -46,8 +59,8 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
           <label for="bookit_reservation_email_subject"><?php echo __('New Reservation Subject') ?></label>
         </th>
         <td>
-          <input name="bookit_reservation_email_subject" type="text" id="bookit_reservation_email_subject" value="<?php echo get_option('bookit_reservation_email_subject'); ?>" class="regular-text">
-          <p class="description"><?php echo __('The subject of the email that get\'s sent for new reservation bookings.') ?></p>
+          <input name="bookit_reservation_email_subject" type="text" id="bookit_reservation_email_subject" value="<?php echo get_option('bookit_reservation_email_subject', 'bookit'); ?>" class="regular-text">
+          <p class="description"><?php echo __('The subject of the email that get\'s sent for new reservation bookings.', 'bookit') ?></p>
         </td>
       </tr>
       <tr valign="top">
@@ -100,7 +113,7 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
   <div style="float:right; width:40%;">
     <div class="metabox-holder">
       <div class="postbox">
-        <h3 class="hndle"><?php echo __('Available Shortcodes', 'bookit') ?></h3>
+        <h3 class="hndle"><?php echo __('Available Email Template Shortcodes', 'bookit') ?></h3>
         <div class="inside">
           <table>
             <tbody>
