@@ -56,6 +56,37 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
     <table class="form-table">
       <tr valign="top">
         <th scope="row">
+          <label for="bookit_emails_default_subject"><?php echo __('Default Email Subject') ?></label>
+        </th>
+        <td>
+          <input name="bookit_emails_default_subject" type="text" id="bookit_emails_default_subject" value="<?php echo get_option( 'bookit_emails_default_subject', 'bookit' )?>" class="regular-text">
+          <p class="description"><?php echo __( 'Enter the default email subject if one isn\'t set.', 'bookit' )?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookit_emails_new_reservation_subject"><?php echo __('New Reservation Email Subject') ?></label>
+        </th>
+        <td>
+          <input name="bookit_emails_new_reservation_subject" type="text" id="bookit_emails_new_reservation_subject" value="<?php echo get_option( 'bookit_emails_new_reservation_subject', 'bookit' )?>" class="regular-text">
+          <p class="description"><?php echo __( 'Enter the subject of the email for new reservation bookings.', 'bookit' )?></p>
+        </td>
+      </tr>
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookit_emails_new_reservation_template"><?php echo __('New Reservation Email Template') ?></label>
+        </th>
+        <td>
+          <textarea name="bookit_emails_new_reservation_template" id="bookit_emails_new_reservation_template" rows="10" class="large-text code"><?php echo get_option( 'bookit_emails_new_reservation_template', 'bookit')?></textarea>
+          <p class="description"><?php echo __( 'This is the email that get\'s sent out for new reservations. HTML accepted.')?></p>
+        </td>
+      </tr>
+
+
+
+
+      <tr valign="top">
+        <th scope="row">
           <label for="bookit_reservation_email_subject"><?php echo __('New Reservation Subject') ?></label>
         </th>
         <td>

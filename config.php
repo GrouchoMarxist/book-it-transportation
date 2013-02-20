@@ -246,3 +246,10 @@ $bookit_config['reservation-status'] = get_option('bookit_default_reservation_st
 $bookit_config['reservation-received-url'] = get_option('bookit_reservation_received_url');
 
 $bookit_config['premium'] = true;
+
+
+// Email settings
+$bookit_config['emails']['new_reservation'] = array(
+  'subject'   => get_option('bookit_emails_new_reservation_subject'),
+  'template'  => get_option('bookit_emails_new_reservation_template')
+);
