@@ -10,18 +10,16 @@ Author URI: http://www.benmarshall.me
 include( plugin_dir_path( __FILE__ ) . 'config.php' );
 
 function bookit_add_settings() {
-  
-  register_setting( 'bookit_options', 'bookit_confirmation_email_subject', 'bookit_emailSubject' );
-  register_setting( 'bookit_options', 'bookit_outsource_reservation_email_subject', 'bookit_emailSubject' );
-  register_setting( 'bookit_options', 'bookit_confirmation_email_template' );
-  register_setting( 'bookit_options', 'bookit_outsource_reservation_email_template' );
-  
   register_setting( 'bookit_options', 'bookit_reservation_received_url', 'bookit_isValidURL' );
   register_setting( 'bookit_options', 'bookit_default_reservation_status' );
   register_setting( 'bookit_options', 'bookit_reservation_failed_url', 'bookit_isValidURL' );
-  register_setting( 'bookit_options', 'bookit_emails_new_reservation_subject', 'bookit_emailSubject' );
   register_setting( 'bookit_options', 'bookit_emails_default_subject', 'bookit_emailSubject' );
+  register_setting( 'bookit_options', 'bookit_emails_new_reservation_subject', 'bookit_emailSubject' );
   register_setting( 'bookit_options', 'bookit_emails_new_reservation_template' );
+  register_setting( 'bookit_options', 'bookit_emails_reservation_confirmed_subject', 'bookit_emailSubject' );
+  register_setting( 'bookit_options', 'bookit_emails_reservation_confirmed_template' );
+  register_setting( 'bookit_options', 'bookit_emails_outsource_subject', 'bookit_emailSubject' );
+  register_setting( 'bookit_options', 'bookit_emails_outsource_template' );
 }
 
 add_action( 'admin_init', 'bookit_admin' );
@@ -37,9 +35,15 @@ function bookit_init() {
   if (!session_id()) {
     session_start();
   }
-  
+  // Required
   if( ! get_option( 'bookit_default_reservation_status' ) ) {
      update_option( 'bookit_default_reservation_status', 'pending-review' );
+  }
+  if( ! get_option( 'bookit_reservation_received_url' ) ) {
+     update_option( 'bookit_reservation_received_url', get_site_url() );
+  }
+  if( ! get_option( 'bookit_reservation_failed_url' ) ) {
+     update_option( 'bookit_reservation_failed_url', get_site_url() );
   }
 
   bookit_add_post_types();
@@ -72,29 +76,48 @@ function bookit_process_post() {
   if( $_POST ) {
     if( isset( $_POST['bookit_action'] ) ) {
       switch( $_POST['bookit_action'] ) {
-        case 'send_reservation_received':
+        case 'send_new_reservation_email':
           if( isset( $_POST['ID'] ) ) {
-            if( bookit_send_email( $_POST['ID'], 'new_reservation' ) == 'success' ) {
+            $result = bookit_send_email( $_POST['ID'], 'new_reservation' );
+            if( $result == 'success' ) {
               echo __( 'Email successfully sent.', 'bookit' );
             } else {
-              echo __( 'There was a problem sending the email.', 'bookit' );
+              if ( is_array($result) ) {
+                foreach( $result as $key => $value ) {
+                  echo __( '<strong>Failed:</strong> ' . $value, 'bookit' );
+                }
+              }
             }
           }
           die();
           break;
        case 'send_reservation_confirmed':
           if( isset( $_POST['ID'] ) ) {
-            if( email_reservation_confirmed( $_POST['ID'] ) ) {
+            $result = bookit_send_email( $_POST['ID'], 'reservation_confirmed' );
+            if( $result == 'success' ) {
               echo __( 'Email successfully sent.', 'bookit' );
             } else {
-              echo __( 'There was a problem sending the email.', 'bookit' );
+              if ( is_array($result) ) {
+                foreach( $result as $key => $value ) {
+                  echo __( '<strong>Failed:</strong> ' . $value, 'bookit' );
+                }
+              }
             }
           }
           die();
           break;
         case 'send_reservation_outsource':
           if( isset( $_POST['ID'] ) ) {
-            echo email_reservation_outsource( $_POST['ID'] );
+            $result = bookit_send_email( $_POST['ID'], 'outsource' );
+            if( $result == 'success' ) {
+              echo __( 'Email successfully sent.', 'bookit' );
+            } else {
+              if ( is_array($result) ) {
+                foreach( $result as $key => $value ) {
+                  echo __( '<strong>Failed:</strong> ' . $value, 'bookit' );
+                }
+              }
+            }
           }
           die();
           break;
@@ -179,7 +202,6 @@ function bookit_send_email( $ID, $type ) {
               $ary[$tag] .= $v->name;
             }
           }
-          
           $headers[] = 'From: ' . get_bloginfo( 'admin_name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>';
           $headers[] = 'Bcc: ' . get_bloginfo( 'admin_name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>';
           add_filter( 'wp_mail_content_type', create_function( '', 'return "text/html";' ) );
@@ -187,10 +209,10 @@ function bookit_send_email( $ID, $type ) {
             $errors[] = __( 'There was a problem sending the email.', 'bookit' );
           }
         } else {
-          $errors[] = __( 'Unable to locate the \'$template\' email template.', 'bookit' );
+          $errors[] = __( 'You must first create a <a href="wp-admin/options-general.php?page=bookit">email template</a>.', 'bookit' );
         }
       } else {
-        $errors[] = __( 'Unable to locate the \'$type\' email type.', 'bookit' );
+        $errors[] = __( 'Unable to locate the \'' . $type . '\' email type.', 'bookit' );
       }
     } else {
       $errors[] = __( 'The user\'s email is invaild.', 'bookit' );
@@ -198,82 +220,12 @@ function bookit_send_email( $ID, $type ) {
   } else {
     $errors[] = __( 'Unable to load the post.', 'bookit' );
   }
-  if (count($errors) == 0 ) {
+
+  if (count($errors) > 0 ) {
     return $errors;
   } else {
     return 'success';
   }
-}
-
-function email_reservation_outsource( $ID ) {
-  global $bookit_config;
-  $post = get_post($ID);
-  $meta = get_post_custom($ID);
-  $outsource = get_the_terms( $ID, 'outsource_companies', '', '', '' );
-  if ($outsource) {
-    $user_name = $outsource[0]->name;
-    $user_email = get_option("_term_type_outsource_companies_".$outsource[0]->term_id);
-    $subject = $bookit_config['emails']['outsource_reservation_email_subject'];
-    $categories = array();
-    foreach($bookit_config['categories'] as $key=>$value) {
-      $category = wp_get_post_terms( $ID, $key );
-      $categories[$key] = $category;
-    }
-
-    $ary = array(
-      'title' => $post->post_title
-    );
-    foreach($bookit_config['fields'] as $key=>$array) {
-      $ary[$array['key']] = $meta[$array['key']][0];
-    }
-    foreach($categories as $tag=>$array) {
-      foreach($array as $k=>$v) {
-        if(isset($ary[$tag])) $ary[$tag] .= ', ';
-        $ary[$tag] = $v->name;
-      }
-    }
-
-    $headers[] = 'From: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
-    $headers[] = 'Bcc: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
-    add_filter('wp_mail_content_type',create_function('', 'return "text/html";'));
-    wp_mail( $user_name.' <'.$user_email.'>', $bookit_config['emails']['outsource_reservation_email_subject'], bookit_tags($bookit_config['emails']['outsource_reservation_email_template'],$ary), $headers );
-    return __('Email successfully sent.', 'bookit');
-  } else {
-    return __('<b>This reservation isn\'t currently assiged to an outsource company.</b> Be sure an outsource company is selected and the reservation has been saved.', 'bookit');
-  }
-}
-function email_reservation_confirmed($ID) {
-  global $bookit_config;
-  $post = get_post($ID);
-  $meta = get_post_custom($ID);
-  $user_name = $meta['contact_name'][0];
-  $user_email = $meta['contact_email'][0];
-  $subject = $bookit_config['emails']['reservation_confirmation_email_subject'];
-
-  $categories = array();
-  foreach($bookit_config['categories'] as $key=>$value) {
-    $category = wp_get_post_terms( $ID, $key );
-    $categories[$key] = $category;
-  }
-
-  $ary = array(
-    'title' => $post->post_title
-  );
-  foreach($bookit_config['fields'] as $key=>$array) {
-    $ary[$array['key']] = $meta[$array['key']][0];
-  }
-  foreach($categories as $tag=>$array) {
-    foreach($array as $k=>$v) {
-      if(isset($ary[$tag])) $ary[$tag] .= ', ';
-      $ary[$tag] = $v->name;
-    }
-  }
-
-  $headers[] = 'From: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
-  $headers[] = 'Bcc: '.get_bloginfo('admin_name').' <'.get_bloginfo('admin_email').'>';
-  add_filter('wp_mail_content_type',create_function('', 'return "text/html";'));
-  wp_mail( $user_email, $bookit_config['emails']['reservation_confirmation_email_subject'], bookit_tags($bookit_config['emails']['reservation_confirmation_email_confirmed_template'],$ary), $headers );
-  return true;
 }
 // Rewrites email template tags
 function bookit_tags($html,$ary) {
@@ -308,7 +260,7 @@ function bookit_isValidURL($value) {
     add_settings_error(
       'bookit_reservation_received_url',
       'bookit_reservation_received_url_error',
-      'Please enter a valid, working URL.',
+      '"<em>' . $value . '</em>" is not a valid URL.',
       'error'
     );
   }

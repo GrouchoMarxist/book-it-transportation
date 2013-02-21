@@ -1,6 +1,6 @@
 <?php
 /*
-Book It! Transportation 1.0.3
+Book It! Transportation 1.0.4
 http://www.benmarshall.me/book-it-transportation/
 */
 
@@ -234,18 +234,16 @@ $bookit_config['reservation-status'] = get_option('bookit_default_reservation_st
 $bookit_config['reservation-received-url'] = get_option('bookit_reservation_received_url');
 $bookit_config['reservation-failed-url'] = get_option('bookit_reservation_failed_url');
 
-$bookit_config['premium'] = true;
-
-
-// Email settings
-$bookit_config['emails']['outsource_reservation_email_subject'] = get_option('bookit_outsource_reservation_email_subject');
-$bookit_config['emails']['outsource_reservation_email_template'] = get_option('bookit_outsource_reservation_email_template');
-
-// Reservation confirmation email template
-$bookit_config['emails']['reservation_confirmation_email_subject'] = get_option('bookit_confirmation_email_subject');
-$bookit_config['emails']['reservation_confirmation_email_confirmed_template'] = get_option('bookit_confirmation_email_template');
-
 $bookit_config['emails']['new_reservation'] = array(
   'subject'   => get_option('bookit_emails_new_reservation_subject'),
   'template'  => get_option('bookit_emails_new_reservation_template')
 );
+$bookit_config['emails']['reservation_confirmed'] = array(
+  'subject'   => get_option('bookit_emails_reservation_confirmed_subject'),
+  'template'  => get_option('bookit_emails_reservation_confirmed_template')
+);
+$bookit_config['emails']['outsource'] = array(
+  'subject'   => get_option('bookit_emails_outsource_subject'),
+  'template'  => get_option('bookit_emails_outsource_template')
+);
+$bookit_config['premium'] = true;

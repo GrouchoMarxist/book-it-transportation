@@ -31,7 +31,7 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
         </th>
         <td>
           <input name="bookit_reservation_failed_url" type="text" id="bookit_reservation_failed_url" value="<?php echo get_option('bookit_reservation_failed_url'); ?>" class="regular-text">
-          <p class="description"><?php echo __('The URL the user is directed to if the new reservation email failed to send out.)') ?></p>
+          <p class="description"><?php echo __('The URL the user is directed to if the new reservation email failed to send out.') ?></p>
         </td>
       </tr>
       <tr valign="top">
@@ -90,62 +90,40 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
           <p class="description"><?php echo __( 'This is the email that get\'s sent out for new reservations. HTML accepted.')?></p>
         </td>
       </tr>
-
-
-
-
       <tr valign="top">
         <th scope="row">
-          <label for="bookit_reservation_email_subject"><?php echo __('New Reservation Subject') ?></label>
+          <label for="bookit_emails_reservation_confirmed_subject"><?php echo __('Reservation Confirmed Subject') ?></label>
         </th>
         <td>
-          <input name="bookit_reservation_email_subject" type="text" id="bookit_reservation_email_subject" value="<?php echo get_option('bookit_reservation_email_subject', 'bookit'); ?>" class="regular-text">
-          <p class="description"><?php echo __('The subject of the email that get\'s sent for new reservation bookings.', 'bookit') ?></p>
+          <input name="bookit_emails_reservation_confirmed_subject" type="text" id="bookit_emails_reservation_confirmed_subject" value="<?php echo get_option('bookit_emails_reservation_confirmed_subject'); ?>" class="regular-text">
+          <p class="description"><?php echo __('The subject of the reservation confirmation email.') ?></p>
         </td>
       </tr>
       <tr valign="top">
         <th scope="row">
-          <label for="bookit_reservation_email_template"><?php echo __('Reservation Confirmed Body') ?></label>
+          <label for="bookit_emails_reservation_confirmed_template"><?php echo __('Reservation Confirmed Template') ?></label>
         </th>
         <td>
-          <textarea name="bookit_reservation_email_template" id="bookit_reservation_email_template" rows="10" class="large-text code"><?php echo get_option('bookit_reservation_email_template'); ?></textarea>
-          <p class="description"><?php echo __('This is what will appear in the email that get\'s sent for new reservations.') ?></p>
+          <textarea name="bookit_emails_reservation_confirmed_template" id="bookit_emails_reservation_confirmed_template" rows="10" class="large-text code"><?php echo get_option('bookit_emails_reservation_confirmed_template'); ?></textarea>
+          <p class="description"><?php echo __('This is the email that get\'s sent out for confirmed reservations.') ?></p>
         </td>
       </tr>
       <tr valign="top">
         <th scope="row">
-          <label for="bookit_confirmation_email_subject"><?php echo __('Reservation Confirmed Subject') ?></label>
+          <label for="bookit_emails_outsource_subject"><?php echo __('Reservation Outsource Subject') ?></label>
         </th>
         <td>
-          <input name="bookit_confirmation_email_subject" type="text" id="bookit_confirmation_email_subject" value="<?php echo get_option('bookit_confirmation_email_subject'); ?>" class="regular-text">
-          <p class="description"><?php echo __('The subject of the email that get\'s sent for reservation confirmations.') ?></p>
+          <input name="bookit_emails_outsource_subject" type="text" id="bookit_emails_outsource_subject" value="<?php echo get_option('bookit_emails_outsource_subject'); ?>" class="regular-text">
+          <p class="description"><?php echo __('The subject of the reservation email that get\'s sent to outsource companies.') ?></p>
         </td>
       </tr>
       <tr valign="top">
         <th scope="row">
-          <label for="bookit_confirmation_email_template"><?php echo __('Reservation Confirmed Body') ?></label>
+          <label for="bookit_emails_outsource_template"><?php echo __('Reservation Outsource Template') ?></label>
         </th>
         <td>
-          <textarea name="bookit_confirmation_email_template" id="bookit_confirmation_email_template" rows="10" class="large-text code"><?php echo get_option('bookit_confirmation_email_template'); ?></textarea>
-          <p class="description"><?php echo __('This is what will appear in the email that get\'s sent for confirmations.') ?></p>
-        </td>
-      </tr>
-      <tr valign="top">
-        <th scope="row">
-          <label for="bookit_confirmation_email_subject"><?php echo __('Reservation Outsource Subject') ?></label>
-        </th>
-        <td>
-          <input name="bookit_outsource_reservation_email_subject" type="text" id="bookit_outsource_reservation_email_subject" value="<?php echo get_option('bookit_outsource_reservation_email_subject'); ?>" class="regular-text">
-          <p class="description"><?php echo __('The subject of the email that get\'s sent for reservations sent to outsource companies.') ?></p>
-        </td>
-      </tr>
-      <tr valign="top">
-        <th scope="row">
-          <label for="bookit_outsource_reservation_email_template"><?php echo __('Reservation Outsource Body') ?></label>
-        </th>
-        <td>
-          <textarea name="bookit_outsource_reservation_email_template" id="bookit_outsource_reservation_email_template" rows="10" class="large-text code"><?php echo get_option('bookit_outsource_reservation_email_template'); ?></textarea>
-          <p class="description"><?php echo __('This is what will appear in the email that get\'s sent to the reservation\'s booked outsource company.', 'bookit') ?></p>
+          <textarea name="bookit_emails_outsource_template" id="bookit_emails_outsource_template" rows="10" class="large-text code"><?php echo get_option('bookit_emails_outsource_template'); ?></textarea>
+          <p class="description"><?php echo __('This is the email that contains reservation information for outsource companies.', 'bookit') ?></p>
         </td>
       </tr>
     </table>
