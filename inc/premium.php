@@ -1,6 +1,6 @@
 <?php
 if( $bookit_config['premium'] ) {
-  add_action( 'post_submitbox_misc_actions', 'bookit_publish_box' );
+  /*add_action( 'post_submitbox_misc_actions', 'bookit_publish_box' );
   function bookit_publish_box() {
     global $post;
     if (get_post_type($post) == 'bookit_reservation') {
@@ -12,7 +12,7 @@ if( $bookit_config['premium'] ) {
     </div>
     <?
     }
-  }
+  }*/
 
   add_action( 'admin_init', 'bookit_admin_premium' );
   function bookit_admin_premium() {

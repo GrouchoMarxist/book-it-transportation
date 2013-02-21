@@ -13,7 +13,19 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
   <div style="float: right;margin-top:10px"><em><?php echo __('Something not work right? Have a feature request?') ?></em> <a href="http://www.benmarshall.me/bugs/" target="_blank" class="button button-primary"><?php echo __('Report a Bug', 'bookit') ?></a></div>
   <h2><?php echo __('Book It! Transportation') ?> &raquo; Settings</h2>
   <hr>
-  <h3 class="title"><?php echo __('Reservation Settings') ?></h3>
+  <h3 class="title"><?php echo __( 'General Settings', 'bookit' ) ?></h3>
+  <table class="form-table">
+    <tr valign="top">
+      <th scope="row">
+        <label for="bookit_license_key"><?php echo __('License Key') ?></label>
+      </th>
+      <td>
+        <input name="bookit_license_key" type="text" id="bookit_license_key" value="<?php echo get_option('bookit_license_key')?>" class="regular-text">
+        <p class="description"><?php echo __( 'Enter your Book It! Transportation License Key for the Pro version.', 'bookit' )?></p>
+      </td>
+    </tr>
+  </table>
+  <h3 class="title"><?php echo __( 'Reservation Settings', 'bookit' ) ?></h3>
   <div style="float:left;width:60%;">
     <table class="form-table">
       <tr valign="top">
