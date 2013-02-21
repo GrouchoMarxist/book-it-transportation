@@ -1,28 +1,28 @@
 <?php
 /*
-Book It! Transportation 1.0.3
+Book It! Transportation 1.0.4
 http://www.benmarshall.me/book-it-transportation/
 */
 
 date_default_timezone_set(get_option('timezone_string'));
 
 // An array to hold the plugin's settings
-$bookittrans_config = array();
+$bookit_config = array();
 
 // Generates an array for the available dates to choose from
-$bookittrans_config['days'] = array();
+$bookit_config['days'] = array();
 for($i = 1; $i <= 31; $i++) {
-  $bookittrans_config['days'][$i] = $i;
+  $bookit_config['days'][$i] = $i;
 }
 
 // Generates an array for the available years to choose from
-$bookittrans_config['years'] = array();
+$bookit_config['years'] = array();
 for($i = date('Y'); $i <= date('Y') + 1; $i++) {
-  $bookittrans_config['years'][$i] = $i;
+  $bookit_config['years'][$i] = $i;
 }
 
 // The available times to choose from.
-$bookittrans_config['times'] = array(
+$bookit_config['times'] = array(
   '01:00'=>'1:00am',
   '01:30'=>'1:30am',
   '02:00'=>'2:00am',
@@ -73,19 +73,8 @@ $bookittrans_config['times'] = array(
   '24:30'=>'12:30pm'
 );
 
-$bookittrans_config['emails']['outsource_reservation_email_subject'] = get_option('bookit_outsource_reservation_email_subject');
-$bookittrans_config['emails']['outsource_reservation_email_template'] = get_option('bookit_outsource_reservation_email_template');
-
-// Reservation confirmation email template
-$bookittrans_config['emails']['reservation_confirmation_email_subject'] = get_option('bookittrans_confirmation_email_subject');
-$bookittrans_config['emails']['reservation_confirmation_email_confirmed_template'] = get_option('bookittrans_confirmation_email_template');
-
-// Reservation email template
-$bookittrans_config['emails']['reservation_email_subject'] = get_option('bookittrans_reservation_email_subject');
-$bookittrans_config['emails']['reservation_email_template'] = get_option('bookittrans_reservation_email_template');
-
 // Reservation fields.
-$bookittrans_config['fields'] = array(
+$bookit_config['fields'] = array(
   array('key'=>'contact_name','name'=>'Contact Name','type'=>'text','class'=>'regular-text','default'=>'','placeholder'=>'What can we call you by?'),
   array('key'=>'contact_phone','name'=>'Contact Phone','type'=>'tel','class'=>'regular-text','default'=>''),
   array('key'=>'contact_email','name'=>'Contact Email','type'=>'email','class'=>'regular-text','default'=>''),
@@ -103,16 +92,16 @@ $bookittrans_config['fields'] = array(
     '11'=>'11 - Nov',
     '12'=>'12 - Dec',
   )),
-  array('key'=>'date','name'=>'Date','type'=>'select','default'=>'','options'=>$bookittrans_config['days']),
-  array('key'=>'year','name'=>'Year','type'=>'select','default'=>'','options'=>$bookittrans_config['years']),
-  array('key'=>'time','name'=>'Time','type'=>'select','default'=>'','options'=>$bookittrans_config['times']),
+  array('key'=>'date','name'=>'Date','type'=>'select','default'=>'','options'=>$bookit_config['days']),
+  array('key'=>'year','name'=>'Year','type'=>'select','default'=>'','options'=>$bookit_config['years']),
+  array('key'=>'time','name'=>'Time','type'=>'select','default'=>'','options'=>$bookit_config['times']),
   array('key'=>'num_hours','name'=>'Number of Hours','type'=>'number','class'=>'small-text','default'=>'1'),
   array('key'=>'num_passengers','name'=>'Number of Passengers','type'=>'number','class'=>'small-text','default'=>'1'),
   array('key'=>'instructions','name'=>'Special Instructions','type'=>'textarea','class'=>'large-text','default'=>'1')
 );
 
 // Reservation categories
-$bookittrans_config['categories'] = array(
+$bookit_config['categories'] = array(
   'vehicle' => array(
     'post_types'=>array('bookit_reservation'),
     'labels' => array(
@@ -122,7 +111,7 @@ $bookittrans_config['categories'] = array(
       'all_items' => __( 'All Vehicles' ),
       'parent_item' => __( 'Parent Vehicle' ),
       'parent_item_colon' => __( 'Parent Vehicle:' ),
-      'edit_item' => __( 'Edit Vehicle' ), 
+      'edit_item' => __( 'Edit Vehicle' ),
       'update_item' => __( 'Update Vehicle' ),
       'add_new_item' => __( 'Add New Vehicle' ),
       'new_item' => __( 'New Vehicle Name' ),
@@ -138,7 +127,7 @@ $bookittrans_config['categories'] = array(
       'all_items' => __( 'All Destinations' ),
       'parent_item' => __( 'Parent Destination' ),
       'parent_item_colon' => __( 'Parent Destination:' ),
-      'edit_item' => __( 'Edit Destination' ), 
+      'edit_item' => __( 'Edit Destination' ),
       'update_item' => __( 'Update Destination' ),
       'add_new_item' => __( 'Add New Destination' ),
       'new_item' => __( 'New Destination Name' ),
@@ -154,7 +143,7 @@ $bookittrans_config['categories'] = array(
       'all_items' => __( 'All Pickup Locations' ),
       'parent_item' => __( 'Parent Pickup Locations' ),
       'parent_item_colon' => __( 'Parent Pickup Locations:' ),
-      'edit_item' => __( 'Edit Pickup Location' ), 
+      'edit_item' => __( 'Edit Pickup Location' ),
       'update_item' => __( 'Update Pickup Location' ),
       'add_new_item' => __( 'Add New Pickup Location' ),
       'new_item' => __( 'New Pickup Name Name' ),
@@ -170,7 +159,7 @@ $bookittrans_config['categories'] = array(
       'all_items' => __( 'All Event Types' ),
       'parent_item' => __( 'Parent Event Type' ),
       'parent_item_colon' => __( 'Parent Event:' ),
-      'edit_item' => __( 'Edit Event' ), 
+      'edit_item' => __( 'Edit Event' ),
       'update_item' => __( 'Update Event' ),
       'add_new_item' => __( 'Add New Event' ),
       'new_item' => __( 'New Evenet Name' ),
@@ -186,7 +175,7 @@ $bookittrans_config['categories'] = array(
       'all_items' => __( 'All Outsource Companies' ),
       'parent_item' => __( 'Parent Outsource Company' ),
       'parent_item_colon' => __( 'Parent Outsource Company:' ),
-      'edit_item' => __( 'Edit Outsource Company' ), 
+      'edit_item' => __( 'Edit Outsource Company' ),
       'update_item' => __( 'Update Outsource Company' ),
       'add_new_item' => __( 'Add New Outsource Company' ),
       'new_item' => __( 'New Outsource Company' ),
@@ -194,9 +183,7 @@ $bookittrans_config['categories'] = array(
     )
   )
 );
-
-// The plugin's custom post types
-$bookittrans_config['post_types'] = array(
+$bookit_config['post_types'] = array(
   'bookit_reservation' => array(
     'args' => array(
       'label' => 'Reservations',
@@ -211,7 +198,7 @@ $bookittrans_config['post_types'] = array(
         'view_item' => 'View Reservation',
         'search_items' => 'Search Reservations',
         'not_found' =>  'No reservations found',
-        'not_found_in_trash' => 'No reservations found in Trash', 
+        'not_found_in_trash' => 'No reservations found in Trash',
         'parent_item_colon' => '',
         'menu_name' => 'Book It! Transportation'
       ),
@@ -225,7 +212,7 @@ $bookittrans_config['post_types'] = array(
       'rewrite' => array( 'slug' => 'reservation' ),
       'exclude_from_search' => false,
       'capability_type' => 'post',
-      'has_archive' => false, 
+      'has_archive' => false,
       'hierarchical' => false,
       'menu_position' => null,
       'supports' => array(
@@ -239,12 +226,24 @@ $bookittrans_config['post_types'] = array(
 
 
 // Set the required fields for booking a reservation
-$bookittrans_config['required_fields'] = array('contact_name','contact_phone','contact_email','month','date','year','time','num_passengers','pickup','vehicle','event_type');
+$bookit_config['required_fields'] = array('contact_name','contact_phone','contact_email','month','date','year','time','num_passengers','pickup','vehicle','event_type');
 
 // Default reservation status
-$bookittrans_config['reservation-status'] = get_option('bookittrans_default_reservation_status');
+$bookit_config['reservation-status'] = get_option('bookit_default_reservation_status');
 
-// Reservation recieved page
-$bookittrans_config['reservation-received-url'] = get_option('bookittrans_reservation_received_url');
+$bookit_config['reservation-received-url'] = get_option('bookit_reservation_received_url');
+$bookit_config['reservation-failed-url'] = get_option('bookit_reservation_failed_url');
 
-$bookittrans_config['enable_money_box'] = false;
+$bookit_config['emails']['new_reservation'] = array(
+  'subject'   => get_option('bookit_emails_new_reservation_subject'),
+  'template'  => get_option('bookit_emails_new_reservation_template')
+);
+$bookit_config['emails']['reservation_confirmed'] = array(
+  'subject'   => get_option('bookit_emails_reservation_confirmed_subject'),
+  'template'  => get_option('bookit_emails_reservation_confirmed_template')
+);
+$bookit_config['emails']['outsource'] = array(
+  'subject'   => get_option('bookit_emails_outsource_subject'),
+  'template'  => get_option('bookit_emails_outsource_template')
+);
+$bookit_config['premium'] = true;
