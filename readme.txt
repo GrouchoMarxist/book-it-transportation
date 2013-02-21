@@ -6,6 +6,7 @@
 * Optimized some code and resolved a few bugs
 * Split out premium features
 * Added a reservation failed redirect option
+* Re-built more stable and reliable email system
 
 = 1.0.3 =
 * Fixed placeholder bug for titles in posts

@@ -16,6 +16,7 @@ To include a reservation booking form in a blog post or page, use the <code>[[RE
 <li>Optimized some code and resolved a few bugs
 <li>Split out premium features
 <li>Added a reservation failed redirect option
+<li>Re-built more stable and reliable email system
 </ul>
 
 <h4>Version 1.0.3</h4>

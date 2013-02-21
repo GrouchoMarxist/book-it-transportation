@@ -20,6 +20,7 @@ function bookit_add_settings() {
   register_setting( 'bookit_options', 'bookit_emails_reservation_confirmed_template' );
   register_setting( 'bookit_options', 'bookit_emails_outsource_subject', 'bookit_emailSubject' );
   register_setting( 'bookit_options', 'bookit_emails_outsource_template' );
+  register_setting( 'bookit_options', 'bookit_license_key' );
 }
 
 add_action( 'admin_init', 'bookit_admin' );
@@ -205,7 +206,7 @@ function bookit_send_email( $ID, $type ) {
           $headers[] = 'From: ' . get_bloginfo( 'admin_name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>';
           $headers[] = 'Bcc: ' . get_bloginfo( 'admin_name' ) . ' <' . get_bloginfo( 'admin_email' ) . '>';
           add_filter( 'wp_mail_content_type', create_function( '', 'return "text/html";' ) );
-          if ( ! wp_mail( $to, bookit_tags( $subject ), bookit_tags( $template, $ary ), $headers ) ) {
+          if ( ! wp_mail( $to, bookit_tags( $subject, $ary ), bookit_tags( $template, $ary ), $headers ) ) {
             $errors[] = __( 'There was a problem sending the email.', 'bookit' );
           }
         } else {

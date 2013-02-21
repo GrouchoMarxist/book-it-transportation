@@ -1,7 +1,9 @@
 <?php
 if( $bookit_config['premium'] ) {
   add_action( 'post_submitbox_misc_actions', 'bookit_publish_box' );
-  function bookit_publish_box( $post ) {
+  function bookit_publish_box() {
+    global $post;
+    if (get_post_type($post) == 'bookit_reservation') {
     ?>
     <div class="misc-pub-section misc-pub-section">
       <h4><?php echo __('The Money Box', 'bookit')?></h4>
@@ -9,6 +11,7 @@ if( $bookit_config['premium'] ) {
       <input type="number" name="bookit_quoted_price" id="bookit_quoted_price" step=".1" min="0" value="<?php echo get_post_meta( $post->ID, 'bookit_quoted_price', true )?>">
     </div>
     <?
+    }
   }
 
   add_action( 'admin_init', 'bookit_admin_premium' );
