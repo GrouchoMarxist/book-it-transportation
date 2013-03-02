@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 1.0.6 =
+* Corrected the reservation shortcode form in the readme file
+* Added the 'Powered by' link and option
+
 = 1.0.5 =
 * Resolved bug #1038
 

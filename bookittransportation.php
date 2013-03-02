@@ -3,7 +3,7 @@
 Plugin Name: Book It! Transportation
 Plugin URI: http://www.benmarshall.me/book-it-transportation/
 Description: A complete management system for your transportation business enabling you to easily accept and manage your transportation bookings.
-Version: 1.0.5
+Version: 1.0.6
 Author: Ben Marshall
 Author URI: http://www.benmarshall.me
 */
@@ -21,6 +21,7 @@ function bookit_add_settings() {
   register_setting( 'bookit_options', 'bookit_emails_outsource_subject', 'bookit_emailSubject' );
   register_setting( 'bookit_options', 'bookit_emails_outsource_template' );
   register_setting( 'bookit_options', 'bookit_license_key' );
+  register_setting( 'bookit_options', 'bookit_show_love' );
 }
 
 add_action( 'admin_init', 'bookit_admin' );
@@ -437,6 +438,11 @@ function bookit_shortcode_reservation_form( $atts ) {
 
   $html .= '<input type="submit" value="Submit Reservation" id="submit" name="submit"></form>';
   unset($_SESSION['bookit']['post']);
+  
+  if ( get_option( 'bookit_show_love' ) != 'hide') {
+    $html .= '<div class="powered-by"><p>Powered by the <a href="http://www.benmarshall.me/book-it-transportation/" target="_blank">Book It! Transportation WordPress Plugin</a>.</p></div>';
+  }
+  
   return $html;
 }
 add_action('wp_enqueue_scripts', 'bookit_add_scipts');

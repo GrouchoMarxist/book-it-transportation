@@ -1,6 +1,6 @@
 <?php
 /*
- * Book It! Transportation 1.0.5
+ * Book It! Transportation 1.0.6
  * http://www.benmarshall.me/book-it-transportation/
  */
 $plugin = get_plugin_data( str_replace('inc/','',plugin_dir_path( __FILE__)).'bookittransportation.php');
@@ -15,6 +15,19 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
   <hr>
   <?php echo file_get_contents('http://www.benmarshall.me/api/?id=2')?>
   <div style="float:left;width:60%;">
+    <h3 class="title"><?php echo __( 'General Settings', 'bookit' ) ?></h3>
+    <table class="form-table">
+      <tr valign="top">
+        <th scope="row">
+          <label for="bookit_show_love"><?php echo __('Hide \'Powered by\' Link') ?></label>
+        </th>
+        <td>
+          <input name="bookit_show_love" type="checkbox" id="bookit_show_love" value="hide"<?php if( get_option('bookit_show_love') == 'hide' ): ?> checked="checked"<?php endif?>>
+          <p class="description"><?php echo __('Like the <a href="http://www.benmarshall.me/book-it-transportation/" target="_blank">Book It! Transportation WordPress Plugin</a>? Leave this option unchecked to show some love.') ?></p>
+        </td>
+      </tr>
+    </table>
+    <hr>
     <h3 class="title"><?php echo __( 'Reservation Settings', 'bookit' ) ?></h3>
     <table class="form-table">
       <tr valign="top">

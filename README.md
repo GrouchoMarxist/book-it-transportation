@@ -5,9 +5,15 @@ A complete management system for your transportation business enabling you to ea
 
 <h3>Implementation</h3>
 
-To include a reservation booking form in a blog post or page, use the <code>[[RESERVATION_DATE_FULLTEXT]]</code>.
+To include a reservation booking form in a blog post or page, use the <code>[bookit_reservation_form]</code>.
 
 <h3>Changelog</h3>
+
+<h4>Version 1.0.6</h4>
+<ul>
+<li>Corrected the reservation shortcode form in the readme file
+<li>Added the 'Powered by' link and option
+</ul>
 
 <h4>Version 1.0.5</h4>
 <ul>
