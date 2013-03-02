@@ -3,7 +3,7 @@
 Plugin Name: Book It! Transportation
 Plugin URI: http://www.benmarshall.me/book-it-transportation/
 Description: A complete management system for your transportation business enabling you to easily accept and manage your transportation bookings.
-Version: 1.0.4
+Version: 1.0.5
 Author: Ben Marshall
 Author URI: http://www.benmarshall.me
 */

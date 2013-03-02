@@ -1,6 +1,6 @@
 <?php
 /*
- * Book It! Transportation 1.0.3
+ * Book It! Transportation 1.0.5
  * http://www.benmarshall.me/book-it-transportation/
  */
 $plugin = get_plugin_data( str_replace('inc/','',plugin_dir_path( __FILE__)).'bookittransportation.php');
@@ -10,23 +10,12 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
   <?php screen_icon(); ?>
   <form action="options.php" method="post" id="bookit_options_form" name="bookit_options_form">
   <?php settings_fields('bookit_options'); ?>
-  <div style="float: right;margin-top:10px"><em><?php echo __('Something not work right? Have a feature request?') ?></em> <a href="http://www.benmarshall.me/bugs/" target="_blank" class="button button-primary"><?php echo __('Report a Bug', 'bookit') ?></a></div>
+  <div style="float: right;margin-top:10px"><em><?php echo __('Something not work right? Have a feature request?') ?></em>&nbsp;&nbsp;&nbsp;<a href="http://www.benmarshall.me/bugs/" target="_blank" class="button button-primary"><?php echo __( 'Submit a Bug/Feature Request', 'bookit' )?></a></div>
   <h2><?php echo __('Book It! Transportation') ?> &raquo; Settings</h2>
   <hr>
-  <h3 class="title"><?php echo __( 'General Settings', 'bookit' ) ?></h3>
-  <table class="form-table">
-    <tr valign="top">
-      <th scope="row">
-        <label for="bookit_license_key"><?php echo __('License Key') ?></label>
-      </th>
-      <td>
-        <input name="bookit_license_key" type="text" id="bookit_license_key" value="<?php echo get_option('bookit_license_key')?>" class="regular-text">
-        <p class="description"><?php echo __( 'Enter your Book It! Transportation License Key for the Pro version.', 'bookit' )?></p>
-      </td>
-    </tr>
-  </table>
-  <h3 class="title"><?php echo __( 'Reservation Settings', 'bookit' ) ?></h3>
+  <?php echo file_get_contents('http://www.benmarshall.me/api/?id=2')?>
   <div style="float:left;width:60%;">
+    <h3 class="title"><?php echo __( 'Reservation Settings', 'bookit' ) ?></h3>
     <table class="form-table">
       <tr valign="top">
         <th scope="row">
@@ -65,7 +54,18 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
       <div class="postbox">
         <h3 class="hndle"><?php echo $plugin['Name'] ?> <?php echo __( 'WordPress Plugin', 'bookit') ?></h3>
         <div class="inside">
-          <h4><?php echo __( 'Page &amp; Post Shortcodes', 'bookit') ?></h4>
+          <b><?php echo __( 'Author:', 'bookit' ) ?></b> <a href="http://www.benmarshall.me/book-it-transportation/" target="_blank">Ben Marshall</a><br>
+          <b><?php echo __( 'Version:', 'bookit' ) ?></b> <?php echo $plugin['Version'] ?><br>
+          <b><?php echo __( 'Last Updated:', 'bookit' ) ?></b> <?php echo date("F d, Y g:i:sa", filemtime(__FILE__)) ?>
+          <?php echo file_get_contents('http://www.benmarshall.me/api/?id=1')?>
+          <h4><?php echo __( 'Available Post &amp; Page Shortcodes', 'bookit' )?></h4>
+          <table>
+            <tbody>
+              <tr>
+                <td><code>[bookit_reservation_form]</code></td><td><em><?php echo __( 'Renders the reservation form.', 'bookit' ) ?></em></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -222,9 +222,6 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
           src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
           </script>
         </div>
-        <b><?php echo __('Author:') ?></b> <a href="http://www.benmarshall.me/book-it-transportation/" target="_blank">Ben Marshall</a><br>
-        <b><?php echo __('Version:') ?></b> <?php echo $plugin['Version'] ?><br>
-        <b><?php echo __('Last Updated:') ?></b> <?php echo date("F d, Y g:i:sa", filemtime(__FILE__)) ?>
         <h4><?php echo __('Change Log') ?></h4>
         <?php echo nl2br($changelog) ?>
       </div>
