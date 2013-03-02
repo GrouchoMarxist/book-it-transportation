@@ -1,6 +1,6 @@
 <?php
 /*
-Book It! Transportation 1.0.4
+Book It! Transportation 1.0.5
 http://www.benmarshall.me/book-it-transportation/
 */
 
