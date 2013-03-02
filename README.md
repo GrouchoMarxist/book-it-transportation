@@ -9,6 +9,11 @@ To include a reservation booking form in a blog post or page, use the <code>[[RE
 
 <h3>Changelog</h3>
 
+<h4>Version 1.0.5</h4>
+<ul>
+<li>Resolved bug <a href="http://www.benmarshall.me/bugs/confirmation-id-not-generated/">#1038</a>
+</ul>
+
 <h4>Version 1.0.4</h4>
 <ul>
 <li>Fixed publish bug when saving reservations using the 'Save Reservation' button

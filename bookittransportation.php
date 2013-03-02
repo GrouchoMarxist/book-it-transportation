@@ -308,7 +308,7 @@ function bookit_save_reservation($post_id, $reservation_details) {
 add_filter( 'enter_title_here', 'bookit_change_enter_title_text', 10, 2 );
 function bookit_change_enter_title_text( $text, $post ) {
   if( $post->post_type == 'bookit_reservation') {
-    return __( 'Enter the reservation confirmation code', 'bookit');
+    return __( 'Enter the reservation confirmation code or leave blank to generate a new one.', 'bookit');
   } else {
     return $text;
   }
@@ -568,6 +568,10 @@ add_filter( 'wp_insert_post_data' , 'bookit_dont_publish' , '99', 2 );
 function bookit_dont_publish( $data , $postarr ) {
   if ($data['post_type'] == 'bookit_reservation' ){
     $data['post_status'] = 'draft';
+  }
+  
+  if ($data['post_title'] == '' || $data['post_title'] === 'Auto Draft') {
+    $data['post_title'] = bookit_randString();
   }
   return $data;
 }
