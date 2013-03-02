@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 1.0.5 =
+* Resolved bug #1038
+
 = 1.0.4 =
 * Fixed publish bug when saving reservations using the 'Save Reservation' button
 * Renamed all instances of bookittrans to bookit. WARNING: This will cause all reservations and related settings to be lost
