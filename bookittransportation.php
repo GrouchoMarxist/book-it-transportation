@@ -47,9 +47,6 @@ function bookit_init() {
   if( ! get_option( 'bookit_reservation_failed_url' ) ) {
      update_option( 'bookit_reservation_failed_url', get_site_url() );
   }
-  if( ! get_option( 'bookit_show_love' ) ) {
-     update_option( 'bookit_show_love', 'show' );
-  }
 
   bookit_add_post_types();
   bookit_add_categories();
@@ -442,7 +439,7 @@ function bookit_shortcode_reservation_form( $atts ) {
   $html .= '<input type="submit" value="Submit Reservation" id="submit" name="submit"></form>';
   unset($_SESSION['bookit']['post']);
   
-  if ( get_option( 'bookit_show_love' ) == 'show') {
+  if ( get_option( 'bookit_show_love' ) != 'hide') {
     $html .= '<div class="powered-by"><p>Powered by the <a href="http://www.benmarshall.me/book-it-transportation/" target="_blank">Book It! Transportation WordPress Plugin</a>.</p></div>';
   }
   

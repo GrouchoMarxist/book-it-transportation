@@ -19,14 +19,15 @@ $changelog = trim(str_replace('== Changelog ==','',file_get_contents(str_replace
     <table class="form-table">
       <tr valign="top">
         <th scope="row">
-          <label for="bookit_show_love"><?php echo __('Show \'Powered by\' Link') ?></label>
+          <label for="bookit_show_love"><?php echo __('Hide \'Powered by\' Link') ?></label>
         </th>
         <td>
-          <input name="bookit_show_love" type="checkbox" id="bookit_show_love" value="show"<?php if( get_option('bookit_show_love') == 'show' ): ?> checked="checked"<?php endif?>>
-          <p class="description"><?php echo __('Like the <a href="http://www.benmarshall.me/book-it-transportation/" target="_blank">Book It! Transportation WordPress Plugin</a>? Show some love by leaving the powered by link on the page.') ?></p>
+          <input name="bookit_show_love" type="checkbox" id="bookit_show_love" value="hide"<?php if( get_option('bookit_show_love') == 'hide' ): ?> checked="checked"<?php endif?>>
+          <p class="description"><?php echo __('Like the <a href="http://www.benmarshall.me/book-it-transportation/" target="_blank">Book It! Transportation WordPress Plugin</a>? Leave this option unchecked to show some love.') ?></p>
         </td>
       </tr>
     </table>
+    <hr>
     <h3 class="title"><?php echo __( 'Reservation Settings', 'bookit' ) ?></h3>
     <table class="form-table">
       <tr valign="top">
