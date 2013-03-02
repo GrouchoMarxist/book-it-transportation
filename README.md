@@ -9,6 +9,12 @@ To include a reservation booking form in a blog post or page, use the <code>[boo
 
 <h3>Changelog</h3>
 
+<h4>Version 1.0.6</h4>
+<ul>
+<li>Corrected the reservation shortcode form in the readme file
+<li>Added the 'Powered by' link and option
+</ul>
+
 <h4>Version 1.0.5</h4>
 <ul>
 <li>Resolved bug <a href="http://www.benmarshall.me/bugs/confirmation-id-not-generated/">#1038</a>
