@@ -3,7 +3,7 @@
 Plugin Name: Book It! Transportation
 Plugin URI: http://www.benmarshall.me/book-it-transportation/
 Description: A complete management system for your transportation business enabling you to easily accept and manage your transportation bookings.
-Version: 1.0.6
+Version: 1.0.7
 Author: Ben Marshall
 Author URI: http://www.benmarshall.me
 */
@@ -179,8 +179,14 @@ function bookit_send_email( $ID, $type ) {
   if ( $post ) {
     $meta   = get_post_custom( $post->ID );
     if ( isset($meta['contact_email'][0]) && is_email( $meta['contact_email'][0] ) ) {
-      $contact_name  = isset($meta['contact_name'][0]) ? $meta['contact_name'][0] : '';
-      $user_email = $meta['contact_email'][0];
+      if ( $type == 'outsource' ) {
+        $outsource_companies = get_the_terms( $post->ID, 'outsource_companies', '', '', '' );
+        $contact_name  = isset($outsource_companies[0]->name) ? $outsource_companies[0]->name : '';
+        $user_email = get_option("_term_type_outsource_companies_" . $outsource_companies[0]->term_id);
+      } else {
+        $contact_name  = isset($meta['contact_name'][0]) ? $meta['contact_name'][0] : '';
+        $user_email = $meta['contact_email'][0];
+      }
       $to = $contact_name . '<' . $user_email . '>';
       $email  = isset($bookit_config['emails'][$type]) ? $bookit_config['emails'][$type] : false;
       if ( $email ) {
@@ -495,9 +501,6 @@ function bookit_options() {
   include( plugin_dir_path( __FILE__ ) . 'inc/options.php');
 }
 
-function get_taxonomy_term_type($taxonomy,$term_id) {
-  return get_option("_term_type_{$taxonomy}_{$term->term_id}");
-}
 function update_taxonomy_term_type($taxonomy,$term_id,$value) {
   update_option("_term_type_{$taxonomy}_{$term_id}",$value);
 }
@@ -574,10 +577,9 @@ add_filter( 'wp_insert_post_data' , 'bookit_dont_publish' , '99', 2 );
 function bookit_dont_publish( $data , $postarr ) {
   if ($data['post_type'] == 'bookit_reservation' ){
     $data['post_status'] = 'draft';
-  }
-  
-  if ($data['post_title'] == '' || $data['post_title'] === 'Auto Draft') {
-    $data['post_title'] = bookit_randString();
+    if ($data['post_title'] == '' || $data['post_title'] === 'Auto Draft') {
+      $data['post_title'] = bookit_randString();
+    }
   }
   return $data;
 }
