@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 1.0.7 =
+* Fixed bug where confirmation codes get generated for other post types besides reservations.
+* Fixed outsource email bug (#1040)
+
 = 1.0.6 =
 * Corrected the reservation shortcode form in the readme file
 * Added the 'Powered by' link and option
