@@ -13,6 +13,7 @@ To include a reservation booking form in a blog post or page, use the <code>[boo
 <ul>
 <li>Fixed bug where confirmation codes get generated for other post types besides reservations.
 <li>Fixed outsource email bug (<a href="http://www.benmarshall.me/bugs/outsource-compay-email/">#1040</a>)
+<li>Updated the readme.txt to comply with WordPress standards.
 </ul>
 
 <h4>Version 1.0.6</h4>
