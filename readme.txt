@@ -1,3 +1,25 @@
+=== Plugin Name ===
+Contributors: bmarshall511
+Donate link: http://www.benmarshall.me/limo-reservation-software/
+Tags: reservations, transportation, limo, limousines, taxi, bookings
+Requires at least: 3.0.1
+Tested up to: 3.5.1
+Stable tag: 1.0.7
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+A reservation management system for your business enabling you to easily accept & manage reservations. A great limo reservation software solution.
+
+== Installation ==
+
+1. Upload `book-it-transportation` to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. To include a reservation booking form in a blog post or page, use the `[bookit_reservation_form]` shortcode.
+
+== Screenshots ==
+
+See http://www.benmarshall.me/limo-reservation-software/
+
 == Changelog ==
 
 = 1.0.7 =
