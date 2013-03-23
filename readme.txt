@@ -4,7 +4,7 @@ Donate link: http://www.benmarshall.me/limo-reservation-software/
 Tags: reservations, transportation, limo, limousines, taxi, bookings
 Requires at least: 3.0.1
 Tested up to: 3.5.1
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,9 @@ A reservation management system for your business enabling you to easily accept 
 See http://www.benmarshall.me/limo-reservation-software/
 
 == Changelog ==
+
+= 1.0.8 =
+* Fixed bug where reservations couldn't be deleted (#1043)
 
 = 1.0.7 =
 * Fixed bug where confirmation codes get generated for other post types besides reservations.

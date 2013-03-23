@@ -9,6 +9,11 @@ To include a reservation booking form in a blog post or page, use the <code>[boo
 
 <h3>Changelog</h3>
 
+<h4>Version 1.0.8</h4>
+<ul>
+<li>Fixed bug where reservations couldn't be deleted (<a href="http://www.benmarshall.me/bugs/not-able-to-delete-unwanted-reservations/">#1043</a>)
+</ul>
+
 <h4>Version 1.0.7</h4>
 <ul>
 <li>Fixed bug where confirmation codes get generated for other post types besides reservations.
