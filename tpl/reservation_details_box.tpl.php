@@ -14,12 +14,54 @@
 			<b><?php _e( 'Reservation Date', 'bookit' ); ?>:</b><br>
 			<input type="date" name="bookit_reservation_date" id="reservation-date" value="<?php echo esc_attr(get_post_meta($post->ID, 'bookit_reservation_date', true)) ?>">
 		</label></p>
+
+		<p><label for="reservation-status">
+			<b><?php _e( 'Reservation Status', 'bookit' ); ?>:</b><br>
+			<?php
+			$terms = get_the_terms( $ID, 'bookit_reservation_status', '', '', '' );
+		  $term_args = array(
+		    'hide_empty' => false,
+		    'orderby' => 'name',
+		    'order' => 'ASC'
+		  );
+		  $reservation_statuses = get_terms('bookit_reservation_status', $term_args);
+		  if ( count($reservation_statuses) > 0 ):
+	  		?>
+				<select name="tax_input[bookit_reservation_status][]" id="reservation-status">
+					<?php foreach ( $reservation_statuses as $key => $obj ): ?>
+						<option value="<?php echo $obj->name ?>" <?php if ($terms[0]->name === $obj->name): ?>selected="selected"<?php endif; ?>><?php echo $obj->name ?></option>
+					<?php endforeach; ?>
+				</select>
+			<?php else: ?>
+				<?php echo __('No') ?> <a href="<?php echo admin_url( 'edit-tags.php?taxonomy=bookit_reservation_status&post_type=bookit_reservation' ) ?>"><?php echo __('reservation statuses') ?></a> <?php echo __('found.') ?>
+			<?php endif; ?></label></p>
 	</div>
 	<div class="bookit-fourth">
 		<p><label for="pickup-time">
 			<b><?php _e( 'Pickup Time', 'bookit' ); ?>:</b><br>
 			<input type="time" name="bookit_pickup_time" id="pickup-time" value="<?php echo esc_attr(get_post_meta($post->ID, 'bookit_pickup_time', true)) ?>">
 		</label></p>
+
+		<p><label for="event-type">
+			<b><?php _e( 'Event Type', 'bookit' ); ?>:</b><br>
+			<?php
+			$terms = get_the_terms( $ID, 'bookit_event_type', '', '', '' );
+		  $term_args = array(
+		    'hide_empty' => false,
+		    'orderby' => 'name',
+		    'order' => 'ASC'
+		  );
+		  $event_types = get_terms('bookit_event_type', $term_args);
+		  if ( count($event_types) > 0 ):
+	  		?>
+				<select name="tax_input[bookit_event_type][]" id="event-type">
+					<?php foreach ( $event_types as $key => $obj ): ?>
+						<option value="<?php echo $obj->name ?>" <?php if ($statuses[0]->name === $obj->name): ?>selected="selected"<?php endif; ?>><?php echo $obj->name ?></option>
+					<?php endforeach; ?>
+				</select>
+			<?php else: ?>
+				<?php echo __('No') ?> <a href="<?php echo admin_url( 'edit-tags.php?taxonomy=bookit_event_type&post_type=bookit_reservation' ) ?>"><?php echo __('event types') ?></a> <?php echo __('found.') ?>
+			<?php endif; ?></label></p>
 	</div>
 	<div class="bookit-fourth">
 		<p><label for="reservation-hours">
@@ -61,7 +103,7 @@
 	<div class="bookit-half">
 		<p><label for="pickup-location">
 			<b><?php _e( 'Pickup Location', 'bookit' ); ?>:</b><br>
-			<input type="text" name="bookit_pickup_location" id="pickup-location" value="<?php echo esc_attr(get_post_meta($post->ID, 'bookit_pickup_location', true)) ?>" class="regular-text"></label> <a href="#" data-location="<?php echo esc_attr(get_post_meta($post->ID, 'bookit_pickup_location', true)) ?>" class="changeMap"><?php echo __('View Map', 'bookit') ?></a></p>
+			<input type="text" name="bookit_pickup_location" id="pickup-location" value="<?php echo esc_attr(get_post_meta($post->ID, 'bookit_pickup_location', true)) ?>" class="regular-text"></label> <a href="#" data-location="<?php echo esc_attr(get_post_meta($post->ID, 'bookit_pickup_location', true)) ?>" class="changeMap"><i class="icon-map-marker bookit-link-icon"></i></a></p>
 
 			<p><iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="//maps.google.com/maps?f=l&amp;hl=en&amp;geocode=&amp;q=<?php echo esc_attr(get_post_meta($post->ID, 'bookit_pickup_location', true)) ?>&amp;ie=UTF8&amp;z=12&amp;t=m&amp;iwloc=addr&amp;output=embed" id="currentMap"></iframe></p>
 	</div>
@@ -78,7 +120,7 @@
 					<div class="bookit-destination misc-pub-section">
 						<label for="destination-<?php echo $key ?>">
 						<span class="num"><?php echo ($key + 1) ?></span> <input type="text" name="bookit_destination[<?php echo $key ?>]" id="destination-<?php echo $key ?>" value="<?php echo esc_attr($destinations[$key]) ?>" class="regular-text"></label>
-						<a href="#" data-location="<?php echo esc_attr($destinations[$key]) ?>" class="changeMap"><?php echo __('View Map', 'bookit') ?></a>
+						<a href="#" data-location="<?php echo esc_attr($destinations[$key]) ?>" class="changeMap"><i class="icon-map-marker bookit-link-icon"></i></a>
 					</div>
 				<?php endforeach; else: ?>
 					<div class="bookit-destination misc-pub-section">

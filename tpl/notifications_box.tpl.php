@@ -51,8 +51,13 @@
 	      ID: <?php echo get_the_ID(); ?>
 	    };
 			$.post(ajaxurl, data, function(response) {
-	      $('#email_status').html('<div class="updated"><p>' + response + '</p></div>');
-	      $('#notification_options .button').removeClass('button-disabled');
+	      $('#notificationM').html( response );
+	      setTimeout(function() {
+	      	$('#notificationM').fadeOut(function() {
+	      		$('#notificationBtns .button').removeClass('button-disabled');
+	      		$(this).remove();
+	      	});
+	      }, 1000);
 	    });
 		});
 	});
