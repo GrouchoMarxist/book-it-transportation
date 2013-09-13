@@ -4,12 +4,12 @@
  * @version 2.0
  */
 ?>
-<div>
+<div id="notificationOptions">
 	<div class="misc-pub-section">
 		<p><?php echo __('Send reservation emails below. Be sure to save the reservation if changes are made below sending any emails.', 'bookit') ?></p>
 	</div>
-	<p class="text-center">
-		<a href="#" class="button"><?php echo __('Received', 'bookit') ?></a>
+	<p class="text-center" id="notificationBtns">
+		<a href="#" class="button" id="sendReceived"><?php echo __('Received', 'bookit') ?></a>
 		<a href="#" class="button"><?php echo __('Confirmed', 'bookit') ?></a>
 		<a href="#" class="button" id="sendDetails"><?php echo __('Email Details', 'bookit') ?></a>
 	</p>
@@ -40,8 +40,20 @@
 			$('#emailDetails').slideToggle();
 		});
 
-		$('#sendEmail').bind('click', function(e) {
-			
+		$('#sendReceived').bind('click', function(e) {
+			e.preventDefault();
+			var msg = $('<div />').attr('id', 'notificationM').addClass('updated').html('Sending, please wait&hellip;');;
+			$('#notificationBtns .button').addClass('button-disabled');
+			$('#notificationOptions').before(msg);
+
+			var data = {
+	      bookit_action: 'send_new_reservation_email',
+	      ID: <?php echo get_the_ID(); ?>
+	    };
+			$.post(ajaxurl, data, function(response) {
+	      $('#email_status').html('<div class="updated"><p>' + response + '</p></div>');
+	      $('#notification_options .button').removeClass('button-disabled');
+	    });
 		});
 	});
 })(jQuery);

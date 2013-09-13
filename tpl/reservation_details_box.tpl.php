@@ -5,9 +5,9 @@
  */
 ?>
 <div><div class="misc-pub-section">
-	<div class="bookit-msg">
+	<?php if ( get_post_meta($post->ID, 'bookit_reservation_date', true) ): ?><div class="bookit-msg">
 		<p><?php echo __('Booked', 'bookit') ?> <abbr class="timeago" title="<?php echo esc_attr(get_post_meta($post->ID, 'bookit_reservation_date', true)) ?> <?php echo esc_attr(get_post_meta($post->ID, 'bookit_pickup_time', true)) ?>"></abbr>.</p>
-	</div>
+	</div><?php endif; ?>
 
 	<div class="bookit-fourth">
 		<p><label for="reservation-date">
@@ -77,13 +77,13 @@
 				<?php if ( count($destinations) > 0 ): foreach ( $destinations as $key => $loc ): ?>
 					<div class="bookit-destination misc-pub-section">
 						<label for="destination-<?php echo $key ?>">
-						<span class="num"><?php echo ($key + 1) ?></span> <input type="text" name="bookit_destination[<?php echo $key ?>]" id="destination-<?php echo $key ?>" value="<?php echo esc_attr($destinations[$key]) ?>"></label>
+						<span class="num"><?php echo ($key + 1) ?></span> <input type="text" name="bookit_destination[<?php echo $key ?>]" id="destination-<?php echo $key ?>" value="<?php echo esc_attr($destinations[$key]) ?>" class="regular-text"></label>
 						<a href="#" data-location="<?php echo esc_attr($destinations[$key]) ?>" class="changeMap"><?php echo __('View Map', 'bookit') ?></a>
 					</div>
 				<?php endforeach; else: ?>
 					<div class="bookit-destination misc-pub-section">
 						<label for="destination-1">
-						<span class="num">1</span> <input type="text" name="bookit_destination[]" id="destination-1"></label>
+						<span class="num">1</span> <input type="text" name="bookit_destination[]" id="destination-1" class="regular-text"></label>
 					</div>
 				<?php endif; ?>
 			</div>

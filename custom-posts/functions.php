@@ -11,7 +11,7 @@ function customposts_init() {
 		$labels = array(
 			'name' => _x( $ary['name'], 'post type general name' ),
 			'singular_name' => _x( $ary['singular_name'], 'post type singular name' ),
-			'add_new' => _x( 'Add New' ),
+			'add_new' => __( 'Add New', 'bookit' ),
 			'add_new_item' => __( 'Add New ' . $ary['singular_name'] ),
 			'edit_item' => __( 'Edit ' . $ary['singular_name'] ),
 			'new_item' => __( 'New ' . $ary['singular_name'] ),

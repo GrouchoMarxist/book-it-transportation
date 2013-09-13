@@ -69,6 +69,25 @@ function bookit_reservation_notifications_box( $post ) {
 	require_once( plugin_dir_path(__FILE__) . '/tpl/notifications_box.tpl.php' );
 }
 
+// Save Box
+add_action( 'add_meta_boxes', 'bookit_save_box' );
+function bookit_save_box() {
+	$plugin = get_plugin_data( __FILE__ );
+	add_meta_box( 'save_box', __( 'Powered by Book It! v' . $plugin['Version'], 'bookit' ), 'bookit_reservation_save_box', 'bookit_reservation', 'side', 'high' );
+}
+function bookit_reservation_save_box( $post ) {
+	require_once( plugin_dir_path(__FILE__) . '/tpl/save_box.tpl.php' );
+}
+
+// Advertisement Box
+add_action( 'add_meta_boxes', 'bookit_adver_box' );
+function bookit_adver_box() {
+	add_meta_box( 'adver_box', __( 'Advertisement', 'bookit' ), 'bookit_reservation_adver_box', 'bookit_reservation', 'side', 'high' );
+}
+function bookit_reservation_adver_box( $post ) {
+	require_once( plugin_dir_path(__FILE__) . '/tpl/adver_box.tpl.php' );
+}
+
 // On Save
 add_action( 'save_post', 'bookit_reservation_details_box_save' );
 function bookit_reservation_details_box_save( $post_id ) {
@@ -131,8 +150,8 @@ function bookit_gettext( $translation, $original ) {
 	return $translation;
 }
 
-add_filter( 'enter_title_here', 'change_enter_title_text', 10, 2 );
-function change_enter_title_text( $text, $post ) {
+add_filter( 'enter_title_here', 'bookit_change_enter_title_text', 10, 2 );
+function bookit_change_enter_title_text( $text, $post ) {
 	global $post_type;
 	if( 'bookit_reservation' == $post_type ) {
 		return 'Reservation Confirmation Code (leave blank to auto-generate)';
@@ -141,3 +160,126 @@ function change_enter_title_text( $text, $post ) {
 
 require_once( plugin_dir_path(__FILE__) . '/custom-posts/functions.php' );
 require_once( plugin_dir_path(__FILE__) . '/custom-taxonomies/functions.php' );
+
+function bookit_render_statuses() {
+	$options = bookit_get_options();
+	?>
+	jhkhjkh
+	<?php
+}
+
+function bookit_render_code_length() {
+	$options = bookit_get_options();
+	?>
+	<p><label for="code-length">
+			<input type="number" min="5" name="bookit_code_length" id="code-length" value="<?php echo esc_attr(get_post_meta($post->ID, 'bookit_code_length', true)) ?>" class="small-text" >
+		</label></p>
+	<?php
+}
+
+add_action( 'init', 'bookit_init' );
+function bookit_init() {
+	bookit_listen();
+}
+
+function bookit_listen() {
+	if( $_POST ) {
+		if( isset( $_POST['bookit_action'] ) ) {
+
+		}
+	}
+}
+
+add_action( 'admin_init', 'bookit_options_init' );
+function bookit_options_init() {
+	register_setting( 'bookit_options', 'bookit_plugin_options', 'bookit_plugin_options_validate' );
+
+	add_settings_section( 'bookit_options', 'General Settings', '__return_false', 'bookit_settings' );
+
+	add_settings_field( 'bookit_statuses', __( 'Reservation Status Options', 'bookit' ), 'bookit_render_statuses', 'bookit_settings', 'bookit_options' );
+	add_settings_field( 'bookit_code_length', __( 'Confirmation Code Length', 'bookit' ), 'bookit_render_code_length', 'bookit_settings', 'bookit_options' );
+}
+
+
+add_action( 'admin_menu', 'bookit_plugin_options_add_page' );
+function bookit_plugin_options_add_page() {
+	add_plugins_page( __( 'Book It! Options', 'bookit' ), __( 'Book It! Options', 'bookit' ), 'edit_theme_options', 'bookit_options', 'bookit_plugin_options_render_page' );
+
+  remove_meta_box('tagsdiv-bookit_event_type', 'bookit_reservation', 'side');
+  remove_meta_box('tagsdiv-bookit_outsource_company', 'bookit_reservation', 'side');
+  remove_meta_box('tagsdiv-bookit_vehicle', 'bookit_reservation', 'side');
+  remove_meta_box('submitdiv', 'bookit_reservation', 'side');
+  remove_meta_box('commentstatusdiv', 'bookit_reservation', 'normal');
+
+}
+
+function bookit_get_options() {
+	$saved = (array) get_option( 'bookit_plugin_options' );
+	$defaults = array();
+
+	$defaults = apply_filters( 'bookit_default_theme_options', $defaults );
+
+	$options = wp_parse_args( $saved, $defaults );
+	$options = array_intersect_key( $options, $defaults );
+
+	return $options;
+}
+
+function bookit_plugin_options_render_page() {
+	?>
+	<div class="wrap">
+		<?php screen_icon(); ?>
+		<h2><?php echo __('Book It! Transportation Options', 'bookit'); ?></h2>
+		<?php settings_errors(); ?>
+
+		<form method="post" action="options.php">
+			<?php
+				settings_fields( 'bookit_options' );
+				do_settings_sections( 'bookit_settings' );
+				submit_button();
+			?>
+		</form>
+	</div>
+	<?php
+}
+
+function bookit_plugin_options_validate( $input ) {
+	$output = array();
+
+	return apply_filters( 'bookit_plugin_options_validate', $output, $input );
+}
+
+function bookit_randString($length=10, $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
+	if(!$length) $length = 10;
+  $str = '';
+  $count = strlen($charset);
+  while ($length--) {
+    $str .= $charset[mt_rand(0, $count-1)];
+  }
+  return $str;
+}
+
+add_filter( 'wp_insert_post_data' , 'bookit_auto_generate_title' , '99', 2 );
+function bookit_auto_generate_title( $data , $postarr ) {
+	global $wpdb;
+	if ( $data['post_type'] == 'bookit_reservation' && strlen($data['post_title']) < 1 ) {
+		$unique = false;
+		while(!$unique) {
+			$rand = bookit_randString(get_post_meta($post->ID, 'bookit_code_length', true));
+			$query = $wpdb->prepare('SELECT ID FROM ' . $wpdb->posts . ' WHERE post_title = %s AND post_type = \'bookit_reservation\'', $rand);
+			$wpdb->query( $query );
+			if ( !$wpdb->num_rows ) {
+				$unique = true;
+			}
+		}
+		$data['post_title'] = $rand;
+	}
+	return $data;
+}
+
+function bookit_force_type_private ( $post ) {
+	if ($post['post_type'] == 'bookit_reservation' && $post['post_status'] == 'publish') $post['post_status'] = 'private';
+	
+	return $post;
+}
+add_filter('wp_insert_post_data', 'bookit_force_type_private');
